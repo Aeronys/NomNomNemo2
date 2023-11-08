@@ -34,3 +34,21 @@ function Player:movePlayer(dt)
     self.currentRotation = 0
   end
 end
+
+-- The player is the only one we care about having collisions for now
+function Player:checkCollision(other)
+  self.left = self.x
+  self.right = self.x + self.width
+  self.top = self.y
+  self.bottom = self.y + self.height
+  
+  other.left = other.x
+  other.right = other.x + other.width
+  other.top = other.y
+  other.bottom = other.y + other.height
+  
+  return self.right > other.left
+  and self.left < other.right
+  and self.top < other.bottom
+  and self.bottom > other.top
+end

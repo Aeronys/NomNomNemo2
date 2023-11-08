@@ -13,7 +13,7 @@ function love.load()
   
   player = Player(playAreaWidth/2, playAreaHeight/2)
   fish = {}
-  startingFishAmount = 100
+  startingFishAmount = 10
   
   -- Populate game area with random fish
   for i = 1, startingFishAmount do
@@ -29,6 +29,12 @@ function love.update(dt)
 end
 
 function love.draw()
+  for i,v in ipairs(fish) do
+    if player:checkCollision(v) then
+      table.remove(fish, i)
+    end
+  end
+  
   player:draw()
   for i, v in ipairs(fish) do
     v:draw()
