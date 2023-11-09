@@ -30,6 +30,19 @@ function Player:movePlayer(dt)
     self.currentRotation = self.moveRotation * self.faceDirection
     self.y = self.y + self.moveSpeed * dt
   end
+  
+  if self.x > playAreaWidth then
+      self.x = 0
+  elseif self.x < 0 then
+    self.x = playAreaWidth
+  end
+  
+  if self.y < 0 + self.height / 2 then
+    self.y = 0 + self.height / 2
+  elseif self.y > playAreaHeight - seaBedHeight - self.height / 2 then
+    self.y = playAreaHeight - seaBedHeight - self.height /2
+  end
+    
   if not love.keyboard.isDown('up', 'down', 'w', 's') then
     self.currentRotation = 0
   end
