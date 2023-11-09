@@ -2,7 +2,7 @@
 Player = Fish:extend()
 
 function Player:new(x, y)
-  Player.super.new(self, x, y, 'images/PNG/Default size/fishTile_080.png')
+  Player.super.new(self, x, y, 'images/PNG/Default size/fishTile_081.png')
   self.moveSpeed = 200
 end
 

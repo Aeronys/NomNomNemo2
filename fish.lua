@@ -1,12 +1,8 @@
 --This object will be used for all fish drawn
-Fish = Object:extend()
+Fish = Entity:extend()
 
 function Fish:new(x, y, image_path)
-  self.x = x
-  self.y = y
-  self.image = love.graphics.newImage(image_path)
-  self.width = self.image:getWidth()
-  self.height = self.image:getHeight()
+  Fish.super.new(self, x, y, image_path)
   
   self.moveSpeed = 50
   self.size = 1
