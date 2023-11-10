@@ -4,6 +4,7 @@ Player = Fish:extend()
 function Player:new(x, y)
   Player.super.new(self, x, y, 'images/PNG/Default size/fishTile_081.png')
   self.moveSpeed = 200
+  self.width, self.height = self:getRealDimensions()
 end
 
 function Player:update(dt)
@@ -64,4 +65,33 @@ function Player:checkCollision(other)
   and self.left < other.right
   and self.top < other.bottom
   and self.bottom > other.top
+end
+
+function Player:getRealDimensions()
+  local minX = self.width - 1
+  local maxX = 0
+  local minY = self.height - 1
+  local maxY = 0
+  
+  for y = 0, self.height - 1 do
+    for x = 0, self.width - 1 do
+      local r, g, b, a = self.imageData:getPixel(x, y)
+      if not (r == 0 and g == 0 and b == 0 and a == 0) then
+        if x < minX then
+          --print(x, y)
+          --print("Changing from "..minX.." to "..x)
+          minX = x
+        elseif x > maxX then
+          maxX = x
+        end
+        if y < minY then
+          minY = y
+        elseif y > maxY then
+          maxY = y
+        end
+      end
+    end
+  end
+  -- return real width and height of image after removing the blank space
+  return maxX - minX, maxY - minY
 end

@@ -1,9 +1,9 @@
 Entity = Object:extend()
 
-function Entity:new(x, y, image_path)
+function Entity:new(x, y, imagePath)
   self.x = x
   self.y = y
-  self.image = love.graphics.newImage(image_path)
-  self.width = self.image:getWidth()
-  self.height = self.image:getHeight()
+  self.imageData = love.image.newImageData(imagePath)
+  self.image = love.graphics.newImage(self.imageData)
+  self.width, self.height = self.imageData:getDimensions()
 end

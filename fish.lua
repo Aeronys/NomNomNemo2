@@ -1,8 +1,8 @@
 --This object will be used for all fish drawn
 Fish = Entity:extend()
 
-function Fish:new(x, y, image_path)
-  Fish.super.new(self, x, y, image_path)
+function Fish:new(x, y, imagePath)
+  Fish.super.new(self, x, y, imagePath)
   
   self.moveSpeed = 50
   self.size = 1
