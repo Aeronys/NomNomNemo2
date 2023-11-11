@@ -7,45 +7,31 @@ function Player:new(x, y)
 end
 
 function Player:update(dt)
-   self:movePlayer(dt)
+   self:controlPlayer(dt)
 end
 
-function Player:movePlayer(dt)
+function Player:controlPlayer(dt)
   -- Basic wasd and arrow controls for movement
   if love.keyboard.isDown('left') or love.keyboard.isDown('a') then
-    -- Have fish face left if moving left
-    self.faceDirection = -1
-    self.x = self.x - self.moveSpeed * dt
+    self:moveFish('left', dt)
   end
+  
   if love.keyboard.isDown('right') or love.keyboard.isDown('d') then
-    -- Have player face right if moving right
-    self.faceDirection = 1
-    self.x = self.x + self.moveSpeed * dt
+    self:moveFish('right', dt)
   end
+  
   if love.keyboard.isDown('up') or love.keyboard.isDown('w') then
-    self.currentRotation = -self.moveRotation * self.faceDirection
-    self.y = self.y - self.moveSpeed * dt
+    self:moveFish('up', dt)
   end
+  
   if love.keyboard.isDown('down') or love.keyboard.isDown('s') then
-    self.currentRotation = self.moveRotation * self.faceDirection
-    self.y = self.y + self.moveSpeed * dt
+    self:moveFish('down', dt)
   end
   
-  if self.x > playAreaWidth then
-      self.x = 0
-  elseif self.x < 0 then
-    self.x = playAreaWidth
-  end
-  
-  if self.y < 0 + self.height - self.realHeight - self.realY then
-    self.y = 0 + 0 + self.height - self.realHeight - self.realY
-  elseif self.y > playAreaHeight - seaBedHeight - (self.height - self.realHeight - self.realY) then
-    self.y = playAreaHeight - seaBedHeight - (self.height - self.realHeight - self.realY)
-  end
-    
-  if not love.keyboard.isDown('up', 'down', 'w', 's') then
-    self.currentRotation = 0
-  end
+  -- Set fish rotation back to default position if not in motion
+  --if not love.keyboard.isDown('up', 'down', 'w', 's') then
+  --  self.currentRotation = 0
+  --end
 end
 
 -- The player is the only one we care about having collisions for now

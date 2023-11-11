@@ -97,4 +97,10 @@ function randomizeSeaBed()
   end
   return seaBed
 end
-  
+
+-- Set player rotation back to zero whenever the w, s, down, or up keys are released
+function love.keyreleased(key)
+  if key == 'down' or key =='up' or key == 'w' or key == 's' then
+    player.currentRotation = 0
+  end
+end
