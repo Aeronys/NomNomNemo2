@@ -8,6 +8,7 @@ function Fish:new(x, y, imagePath)
   self.size = 1
   self.currentRotation = 0
   self.moveRotation = 0.2
+  self.realWidth, self.realHeight, self.realX, self.realY = self:getRealDimensions()
   
   -- 1 represents facing right, -1 represents facing left
   self.faceDirection = 1
@@ -57,20 +58,30 @@ function Fish:moveFish(dt)
     self.currentRotation = 0
   end
 end
+
+function Fish:getRealDimensions()
+  local minX = self.width - 1
+  local maxX = 0
+  local minY = self.height - 1
+  local maxY = 0
   
-  --[[self.x = x
-  self.y = y
-  self.image = love.graphics.newImage(image_path)
-  self.width = self.image:getWidth()
-  self.height = self.image:getHeight()
-  
-  self.last = {}
-  self.last.x = self.x
-  self.last.y = self.y
-  
-  self.strength = 0
-  self.tempStrength = 0
-  
-  -- Add the gravity and weight properties
-  self.gravity = 0
-  self.weight = 400 ]]--
+  for y = 0, self.height - 1 do
+    for x = 0, self.width - 1 do
+      local r, g, b, a = self.imageData:getPixel(x, y)
+      if not (r == 0 and g == 0 and b == 0 and a == 0) then
+        if x < minX then
+          minX = x
+        elseif x > maxX then
+          maxX = x
+        end
+        if y < minY then
+          minY = y
+        elseif y > maxY then
+          maxY = y
+        end
+      end
+    end
+  end
+  -- return real width and height of image after removing the blank space
+  return maxX - minX, maxY - minY, minX, minY
+end

@@ -4,7 +4,6 @@ Player = Fish:extend()
 function Player:new(x, y)
   Player.super.new(self, x, y, 'images/PNG/Default size/fishTile_081.png')
   self.moveSpeed = 200
-  self.width, self.height = self:getRealDimensions()
 end
 
 function Player:update(dt)
@@ -38,10 +37,10 @@ function Player:movePlayer(dt)
     self.x = playAreaWidth
   end
   
-  if self.y < 0 + self.height / 2 then
-    self.y = 0 + self.height / 2
-  elseif self.y > playAreaHeight - seaBedHeight - self.height / 2 then
-    self.y = playAreaHeight - seaBedHeight - self.height /2
+  if self.y < 0 + self.height - self.realHeight - self.realY then
+    self.y = 0 + 0 + self.height - self.realHeight - self.realY
+  elseif self.y > playAreaHeight - seaBedHeight - (self.height - self.realHeight - self.realY) then
+    self.y = playAreaHeight - seaBedHeight - (self.height - self.realHeight - self.realY)
   end
     
   if not love.keyboard.isDown('up', 'down', 'w', 's') then
@@ -51,47 +50,18 @@ end
 
 -- The player is the only one we care about having collisions for now
 function Player:checkCollision(other)
-  self.left = self.x
-  self.right = self.x + self.width
-  self.top = self.y
-  self.bottom = self.y + self.height
+  self.left = self.x + self.realX
+  self.right = self.x + self.realX + self.realWidth
+  self.top = self.y + self.realY
+  self.bottom = self.y + self.realY + self.realHeight
   
-  other.left = other.x
-  other.right = other.x + other.width
-  other.top = other.y
-  other.bottom = other.y + other.height
+  other.left = other.x + other.realX
+  other.right = other.x + other.realX + other.realWidth
+  other.top = other.y + other.realY
+  other.bottom = other.y + other.realY + other.realHeight
   
   return self.right > other.left
   and self.left < other.right
   and self.top < other.bottom
   and self.bottom > other.top
-end
-
-function Player:getRealDimensions()
-  local minX = self.width - 1
-  local maxX = 0
-  local minY = self.height - 1
-  local maxY = 0
-  
-  for y = 0, self.height - 1 do
-    for x = 0, self.width - 1 do
-      local r, g, b, a = self.imageData:getPixel(x, y)
-      if not (r == 0 and g == 0 and b == 0 and a == 0) then
-        if x < minX then
-          --print(x, y)
-          --print("Changing from "..minX.." to "..x)
-          minX = x
-        elseif x > maxX then
-          maxX = x
-        end
-        if y < minY then
-          minY = y
-        elseif y > maxY then
-          maxY = y
-        end
-      end
-    end
-  end
-  -- return real width and height of image after removing the blank space
-  return maxX - minX, maxY - minY
 end
