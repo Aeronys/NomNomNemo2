@@ -13,8 +13,8 @@ function love.load()
   playAreaHeight = love.graphics.getHeight()
   
   player = Player(playAreaWidth/2, playAreaHeight/2, 1)
-  fish = {}
-  startingFishAmount = 10
+  fishes = {}
+  startingFishAmount = 25
   
   seaBedImages = {}
   seaBedImageCount = 16
@@ -32,20 +32,20 @@ function love.load()
   
   -- Populate game area with random fish
   for i = 1, startingFishAmount do
-    table.insert(fish, addRandomFish())
+    table.insert(fishes, addRandomFish())
   end
 end
 
 function love.update(dt)
   player:update(dt)
-  for i, v in ipairs(fish) do
-    v:update(dt)
+  for fishIndex, fish in ipairs(fishes) do
+    fish:update(dt)
   end
   
   -- Check for collisions between player and other fish
-  for i,v in ipairs(fish) do
-    if player:checkCollision(v) then
-      table.remove(fish, i)
+  for fishIndex, fish in ipairs(fishes) do
+    if player:checkCollision(fish) then
+      resolveCollision(player, fish, fishIndex)
     end
   end
 end
@@ -55,7 +55,7 @@ function love.draw()
   player:draw()
   
   -- Draw all other fish
-  for i, v in ipairs(fish) do
+  for i, v in ipairs(fishes) do
     v:draw()
   end
   
@@ -67,7 +67,8 @@ end
 function addRandomFish()
   local fishX = love.math.random(playAreaWidth)
   local fishY = love.math.random(playAreaHeight)
-  return Fish(fishX, fishY, 2, 'images/PNG/Default size/fishTile_075.png')
+  local fishSize = 1 + love.math.random()
+  return Fish(fishX, fishY, fishSize, 'images/PNG/Default size/fishTile_075.png')
 end
 
 -- Print a single tile
@@ -97,6 +98,17 @@ function randomizeSeaBed()
   end
   return seaBed
 end
+
+function resolveCollision(player, fish, fishIndex)
+  print(player.realSize, fish.realSize)
+  if player.realSize >= fish.realSize then
+    print(fishIndex)
+    table.remove(fishes, fishIndex)
+  else
+    love.load()
+  end
+end
+    
 
 -- Set player rotation back to zero whenever the w, s, down, or up keys are released
 function love.keyreleased(key)

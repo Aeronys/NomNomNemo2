@@ -106,7 +106,6 @@ function Fish:getRealDimensions()
       -- If it does have color, we compare its location to see if it's at a more extreme boundary than any of our other pixels found
       -- Also keeps track of how many pixels the fish is made up of, which is how we'll determine fish size
       if not (r == 0 and g == 0 and b == 0 and a == 0) then
-        realSize = realSize + 1
         if x < minX then
           minX = x
         elseif x > maxX then
@@ -127,7 +126,10 @@ function Fish:getRealDimensions()
   maxX = maxX * self.sizeModifier
   minY = minY * self.sizeModifier
   maxY = maxY * self.sizeModifier
-  realSize = realSize * self.sizeModifier
+  
+  -- Simple length * width to determine size
+  -- Tried using pixel counts, but this created results that didn't always feel right in-game
+  realSize = (maxX - minX) * (maxY - minY)
   
   -- return real width and height of image after removing the blank space
   return maxX - minX, maxY - minY, minX, minY, realSize
