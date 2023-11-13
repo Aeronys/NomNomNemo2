@@ -12,7 +12,7 @@ function love.load()
   playAreaWidth = love.graphics.getWidth()
   playAreaHeight = love.graphics.getHeight()
   
-  player = Player(playAreaWidth/2, playAreaHeight/2)
+  player = Player(playAreaWidth/2, playAreaHeight/2, 1)
   fish = {}
   startingFishAmount = 10
   
@@ -41,16 +41,16 @@ function love.update(dt)
   for i, v in ipairs(fish) do
     v:update(dt)
   end
-end
-
-function love.draw()
+  
   -- Check for collisions between player and other fish
   for i,v in ipairs(fish) do
     if player:checkCollision(v) then
       table.remove(fish, i)
     end
   end
-  
+end
+
+function love.draw()
   -- Draw the player
   player:draw()
   
@@ -67,7 +67,7 @@ end
 function addRandomFish()
   local fishX = love.math.random(playAreaWidth)
   local fishY = love.math.random(playAreaHeight)
-  return Fish(fishX, fishY, 'images/PNG/Default size/fishTile_075.png')
+  return Fish(fishX, fishY, 2, 'images/PNG/Default size/fishTile_075.png')
 end
 
 -- Print a single tile

@@ -1,11 +1,11 @@
 --This object will be used for all fish drawn
 Fish = Entity:extend()
 
-function Fish:new(x, y, imagePath)
+function Fish:new(x, y, sizeMod, imagePath)
   Fish.super.new(self, x, y, imagePath)
   
   self.moveSpeed = 50
-  self.sizeModifier = 2
+  self.sizeModifier = sizeMod
   self.currentRotation = 0
   self.moveRotation = 0.2
   self.realWidth, self.realHeight, self.realX, self.realY, self.realSize = self:getRealDimensions()

@@ -1,9 +1,10 @@
 -- Player is a fish, so we will extend this class
 Player = Fish:extend()
 
-function Player:new(x, y)
-  Player.super.new(self, x, y, 'images/PNG/Default size/fishTile_081.png')
+function Player:new(x, y, sizeMod)
+  Player.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_081.png')
   self.moveSpeed = 200
+  print(self.width, self.realWidth, self.height, self.realHeight)
 end
 
 function Player:update(dt)
@@ -31,15 +32,17 @@ end
 
 -- The player is the only one we care about having collisions for now
 function Player:checkCollision(other)
-  self.left = self.x + self.realX
-  self.right = self.x + self.realX + self.realWidth
-  self.top = self.y + self.realY
-  self.bottom = self.y + self.realY + self.realHeight
+  self.left = self.x - self.realWidth / 2
+  self.right = self.x + self.realWidth / 2
+  self.top = self.y - self.realHeight / 2
+  self.bottom = self.y + self.realHeight / 2
+  --print(self.left, self.right, self.top, self.bottom)
+  --print(self.x, self.y)
   
-  other.left = other.x + other.realX
-  other.right = other.x + other.realX + other.realWidth
-  other.top = other.y + other.realY
-  other.bottom = other.y + other.realY + other.realHeight
+  other.left = other.x - other.realWidth / 2
+  other.right = other.x + other.realWidth / 2
+  other.top = other.y - other.realHeight / 2
+  other.bottom = other.y + other.realHeight / 2
   
   return self.right > other.left
   and self.left < other.right
