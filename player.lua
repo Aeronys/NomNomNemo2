@@ -7,7 +7,7 @@ function Player:new(x, y)
 end
 
 function Player:update(dt)
-   self:controlPlayer(dt)
+  self:controlPlayer(dt)
 end
 
 function Player:controlPlayer(dt)
@@ -27,11 +27,6 @@ function Player:controlPlayer(dt)
   if love.keyboard.isDown('down') or love.keyboard.isDown('s') then
     self:moveFish('down', dt)
   end
-  
-  -- Set fish rotation back to default position if not in motion
-  --if not love.keyboard.isDown('up', 'down', 'w', 's') then
-  --  self.currentRotation = 0
-  --end
 end
 
 -- The player is the only one we care about having collisions for now

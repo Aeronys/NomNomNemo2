@@ -5,10 +5,12 @@ function Fish:new(x, y, imagePath)
   Fish.super.new(self, x, y, imagePath)
   
   self.moveSpeed = 50
-  self.size = 1
+  self.sizeModifier = 2
   self.currentRotation = 0
   self.moveRotation = 0.2
-  self.realWidth, self.realHeight, self.realX, self.realY = self:getRealDimensions()
+  self.realWidth, self.realHeight, self.realX, self.realY, self.realSize = self:getRealDimensions()
+  self.sizedWidth = self.width * self.sizeModifier
+  self.sizedHeight = self.height * self.sizeModifier
   
   -- 1 represents facing right, -1 represents facing left
   self.faceDirection = 1
@@ -29,7 +31,7 @@ function Fish:update(dt)
 end
 
 function Fish:draw()
-  love.graphics.draw(self.image, self.x, self.y, self.currentRotation, self.size * self.faceDirection, self.size, self.width / 2, self.height / 2)
+  love.graphics.draw(self.image, self.x, self.y, self.currentRotation, self.sizeModifier * self.faceDirection, self.sizeModifier, self.width / 2, self.height / 2)
 end
   
 function Fish:animateFish(dt)
@@ -83,10 +85,10 @@ function Fish:moveFish(direction, dt)
   end
   
   -- Keep fish from being able to go outside of vertical boundaries
-  if self.y < 0 + self.height - self.realHeight - self.realY then
-    self.y = 0 + 0 + self.height - self.realHeight - self.realY
-  elseif self.y > playAreaHeight - seaBedHeight - (self.height - self.realHeight - self.realY) then
-    self.y = playAreaHeight - seaBedHeight - (self.height - self.realHeight - self.realY)
+  if self.y < 0 + self.sizedHeight - self.realHeight - self.realY then
+    self.y = 0 + 0 + self.sizedHeight - self.realHeight - self.realY
+  elseif self.y > playAreaHeight - seaBedHeight - (self.sizedHeight - self.realHeight - self.realY) then
+    self.y = playAreaHeight - seaBedHeight - (self.sizedHeight - self.realHeight - self.realY)
   end
 end
 
@@ -95,13 +97,16 @@ function Fish:getRealDimensions()
   local maxX = 0
   local minY = self.height - 1
   local maxY = 0
+  local realSize = 0
   
   for y = 0, self.height - 1 do
     for x = 0, self.width - 1 do
       local r, g, b, a = self.imageData:getPixel(x, y)
-      -- if a pixel has no color applied to it, we ignore it for the sake of our real dimesions
-      -- if it does have color, we compare its location to see if it's at a more extreme boundary than any of our other pixels found
+      -- If a pixel has no color applied to it, we ignore it for the sake of our real dimesions
+      -- If it does have color, we compare its location to see if it's at a more extreme boundary than any of our other pixels found
+      -- Also keeps track of how many pixels the fish is made up of, which is how we'll determine fish size
       if not (r == 0 and g == 0 and b == 0 and a == 0) then
+        realSize = realSize + 1
         if x < minX then
           minX = x
         elseif x > maxX then
@@ -115,6 +120,15 @@ function Fish:getRealDimensions()
       end
     end
   end
+  
+  -- Factor in any size modifications made. This is necessary because the actual image variable's data never changes
+  -- Rather, we apply changes to that data while keeping the original data static
+  minX = minX * self.sizeModifier
+  maxX = maxX * self.sizeModifier
+  minY = minY * self.sizeModifier
+  maxY = maxY * self.sizeModifier
+  realSize = realSize * self.sizeModifier
+  
   -- return real width and height of image after removing the blank space
-  return maxX - minX, maxY - minY, minX, minY
+  return maxX - minX, maxY - minY, minX, minY, realSize
 end
