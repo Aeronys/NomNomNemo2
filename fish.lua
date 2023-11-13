@@ -8,9 +8,7 @@ function Fish:new(x, y, sizeMod, imagePath)
   self.sizeModifier = sizeMod
   self.currentRotation = 0
   self.moveRotation = 0.2
-  self.realWidth, self.realHeight, self.realX, self.realY, self.realSize = self:getRealDimensions()
-  self.sizedWidth = self.width * self.sizeModifier
-  self.sizedHeight = self.height * self.sizeModifier
+  self:updateDimensions()
   
   -- 1 represents facing right, -1 represents facing left
   self.faceDirection = 1
@@ -133,4 +131,10 @@ function Fish:getRealDimensions()
   
   -- return real width and height of image after removing the blank space
   return maxX - minX, maxY - minY, minX, minY, realSize
+end
+
+function Fish:updateDimensions()
+  self.realWidth, self.realHeight, self.realX, self.realY, self.realSize = self:getRealDimensions()
+  self.sizedWidth = self.width * self.sizeModifier
+  self.sizedHeight = self.height * self.sizeModifier
 end

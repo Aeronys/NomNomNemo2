@@ -13,7 +13,7 @@ function love.load()
   playAreaHeight = love.graphics.getHeight()
   
   player = Player(playAreaWidth/2, playAreaHeight/2, 1)
-  fishes = {}
+  fishies = {}
   startingFishAmount = 25
   
   seaBedImages = {}
@@ -32,18 +32,18 @@ function love.load()
   
   -- Populate game area with random fish
   for i = 1, startingFishAmount do
-    table.insert(fishes, addRandomFish())
+    table.insert(fishies, addRandomFish())
   end
 end
 
 function love.update(dt)
   player:update(dt)
-  for fishIndex, fish in ipairs(fishes) do
+  for fishIndex, fish in ipairs(fishies) do
     fish:update(dt)
   end
   
   -- Check for collisions between player and other fish
-  for fishIndex, fish in ipairs(fishes) do
+  for fishIndex, fish in ipairs(fishies) do
     if player:checkCollision(fish) then
       resolveCollision(player, fish, fishIndex)
     end
@@ -55,7 +55,7 @@ function love.draw()
   player:draw()
   
   -- Draw all other fish
-  for i, v in ipairs(fishes) do
+  for i, v in ipairs(fishies) do
     v:draw()
   end
   
@@ -100,10 +100,11 @@ function randomizeSeaBed()
 end
 
 function resolveCollision(player, fish, fishIndex)
-  print(player.realSize, fish.realSize)
+  -- If player is bigger, remove eaten fish and grow a little larger
   if player.realSize >= fish.realSize then
-    print(fishIndex)
-    table.remove(fishes, fishIndex)
+    table.remove(fishies, fishIndex)
+    player:grow(0.03)
+  -- If other fish is bigger, reset the game
   else
     love.load()
   end

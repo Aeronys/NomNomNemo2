@@ -4,7 +4,6 @@ Player = Fish:extend()
 function Player:new(x, y, sizeMod)
   Player.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_081.png')
   self.moveSpeed = 200
-  print(self.width, self.realWidth, self.height, self.realHeight)
 end
 
 function Player:update(dt)
@@ -36,8 +35,6 @@ function Player:checkCollision(other)
   self.right = self.x + self.realWidth / 2
   self.top = self.y - self.realHeight / 2
   self.bottom = self.y + self.realHeight / 2
-  --print(self.left, self.right, self.top, self.bottom)
-  --print(self.x, self.y)
   
   other.left = other.x - other.realWidth / 2
   other.right = other.x + other.realWidth / 2
@@ -48,4 +45,11 @@ function Player:checkCollision(other)
   and self.left < other.right
   and self.top < other.bottom
   and self.bottom > other.top
+end
+
+function Player:grow(growAmount)
+  self.sizeModifier = self.sizeModifier + growAmount
+  
+  -- New size means real and sized dimensions need to be updated
+  self:updateDimensions()
 end
