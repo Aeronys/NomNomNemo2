@@ -4,7 +4,6 @@ Fish = Entity:extend()
 function Fish:new(x, y, sizeMod, imagePath)
   Fish.super.new(self, x, y, imagePath)
   
-  self.moveSpeed = 50
   self.sizeModifier = sizeMod
   self.currentRotation = 0
   self.moveRotation = 0.2
@@ -21,7 +20,16 @@ function Fish:new(x, y, sizeMod, imagePath)
   self.moveTime = love.math.random(self.minMoveTime, self.maxMoveTime)
   self.timer = self.moveTime
   
+  self.detectDistance = 100
+  self.escapeDistance = 300
+  
+  self.state = 'neutral'
   self.directions = {'left', 'right', 'up', 'down'}
+  self.states = {
+    ['neutral'] = {['moveSpeed'] = 50, ['direction'] = 0},
+    ['retreat'] = {['moveSpeed'] = 150, ['direction'] = 0},
+    ['attack'] = {['moveSpeed'] = 100, ['direction'] = 1}
+  }
 end
 
 function Fish:update(dt)
@@ -31,22 +39,65 @@ end
 function Fish:draw()
   love.graphics.draw(self.image, self.x, self.y, self.currentRotation, self.sizeModifier * self.faceDirection, self.sizeModifier, self.width / 2, self.height / 2)
 end
+
+function Fish:detectPlayer(player)
+  local xDistance = self.x - player.x
+  local yDistance = self.y - player.y
+  local distance = math.sqrt(xDistance ^ 2 + yDistance ^ 2)
+  if distance <= self.detectDistance then
+    if player.realSize >= self.realSize then
+      self.state = 'retreat'
+    elseif player.realSize < self.realSize then
+      self.state = 'attack'
+    end
+  elseif distance >= self.escapeDistance then
+    self.state = 'neutral'
+  end
+end
   
 function Fish:animateFish(dt)
-  -- Constantly increment timer
-  self.timer = self.timer + dt
   
-  -- Whenever timer expires, choose new fish direction and move time, and reset timer
-  if self.timer > self.moveTime / self.moveTimeDivider then
-    self.currentRotation = 0
-    self.moveDirection = love.math.random(5)
-    self.moveTime  = love.math.random(self.minMoveTime, self.maxMoveTime)
-    self.timer = 0
-  end
+  self.moveSpeed = self.states[self.state]['moveSpeed']
   
-  -- Our random roll includes more possibilities than directions. If no valid direction is chosen then fish sits still until timer expires
-  if self.moveDirection <= #self.directions then
-    self:moveFish(self.directions[self.moveDirection], dt)
+  -- Random fish movements only apply if the fish is in a neutral state
+  if self.state == 'neutral' then
+    -- Constantly increment timer
+    self.timer = self.timer + dt
+    
+    -- Whenever timer expires, choose new fish direction and move time, and reset timer
+    if self.timer > self.moveTime / self.moveTimeDivider then
+      self.currentRotation = 0
+      self.moveDirection = love.math.random(8)
+      self.moveTime  = love.math.random(self.minMoveTime, self.maxMoveTime)
+      self.timer = 0
+    end
+    
+    -- Our random roll includes more possibilities than directions. If no valid direction is chosen then fish sits still until timer expires
+    if self.moveDirection <= #self.directions then
+      self:moveFish(self.directions[self.moveDirection], dt)
+    end
+  
+  -- If the fish is in a retreat state, it will try to move away from the player
+  elseif self.state == 'retreat' then
+    if player.x >= self.x then
+      self:moveFish('left', dt)
+    else
+      self:moveFish('right', dt)
+    end
+    
+  -- If the fish is in an attack state, it will try to pursue the player
+  elseif self.state == 'attack' then
+    if player.x >= self.x then
+      self:moveFish('right', dt)
+    else
+      self:moveFish('left', dt)
+    end
+    
+    if player.y >= self.y then
+      self:moveFish('down', dt)
+    else
+      self:moveFish('up', dt)
+    end
   end
 end
   

@@ -38,15 +38,17 @@ end
 
 function love.update(dt)
   player:update(dt)
-  for fishIndex, fish in ipairs(fishies) do
-    fish:update(dt)
-  end
   
   -- Check for collisions between player and other fish
   for fishIndex, fish in ipairs(fishies) do
     if player:checkCollision(fish) then
       resolveCollision(player, fish, fishIndex)
     end
+  end
+  
+  for fishIndex, fish in ipairs(fishies) do
+    fish:detectPlayer(player)
+    fish:update(dt)
   end
 end
 
