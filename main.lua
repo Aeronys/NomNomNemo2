@@ -12,7 +12,8 @@ function love.load()
   playAreaWidth = love.graphics.getWidth()
   playAreaHeight = love.graphics.getHeight()
   
-  player = Player(playAreaWidth/2, playAreaHeight/2, 1)
+  playerStartSize = 1
+  player = Player(playAreaWidth/2, playAreaHeight/2, playerStartSize)
   fishies = {}
   startingFishAmount = 20
   

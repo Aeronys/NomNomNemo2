@@ -20,8 +20,8 @@ function Fish:new(x, y, sizeMod, imagePath)
   self.moveTime = love.math.random(self.minMoveTime, self.maxMoveTime)
   self.timer = self.moveTime
   
-  self.detectDistance = 100
-  self.escapeDistance = 300
+  self.detectDistance = 50
+  self.escapeDistance = 150
   
   self.state = 'neutral'
   self.directions = {'left', 'right', 'up', 'down'}
@@ -40,25 +40,28 @@ function Fish:draw()
   love.graphics.draw(self.image, self.x, self.y, self.currentRotation, self.sizeModifier * self.faceDirection, self.sizeModifier, self.width / 2, self.height / 2)
 end
 
+-- Function to detect when player is within a certain distance, and alter state to either attack or retreat based on which fish is bigger
+-- Will also set state back to neutral if player puts a certain amount of distance between them
 function Fish:detectPlayer(player)
   self:getSides()
   player:getSides()
   
-  local xDistance = 0
   if self.right < player.left then
-    xDistance = player.left - self.right
+    self.xDistance = player.left - self.right
   elseif self.left > player.right then
-    xDistance = self.left - player.right 
+    self.xDistance = self.left - player.right
+  else
+    self.xDistance = 0
   end
-  
-  local yDistance = 0
   if self.top > player.bottom then
-    yDistance = self.top - player.bottom
+    self.yDistance = self.top - player.bottom
   elseif self.bottom < player.top then
-    yDistance = player.top - self.bottom
+    self.yDistance = player.top - self.bottom
+  else
+    self.yDistance = 0
   end
   
-  local distance = math.sqrt(xDistance ^ 2 + yDistance ^ 2)
+  local distance = math.sqrt(self.xDistance ^ 2 + self.yDistance ^ 2)
   if distance <= self.detectDistance then
     if player.realSize >= self.realSize then
       self.state = 'retreat'
@@ -94,7 +97,7 @@ function Fish:animateFish(dt)
   
   -- If the fish is in a retreat state, it will try to move away from the player
   elseif self.state == 'retreat' then
-    if player.x >= self.x then
+    if player.left >= self.right then
       self:moveFish('left', dt)
     else
       self:moveFish('right', dt)
@@ -102,15 +105,15 @@ function Fish:animateFish(dt)
     
   -- If the fish is in an attack state, it will try to pursue the player
   elseif self.state == 'attack' then
-    if player.x >= self.x then
+    if player.left >= self.right then
       self:moveFish('right', dt)
-    else
+    elseif self.xDistance > 0 then
       self:moveFish('left', dt)
     end
     
-    if player.y >= self.y then
+    if player.top >= self.bottom then
       self:moveFish('down', dt)
-    else
+    elseif self.yDistance > 0 then
       self:moveFish('up', dt)
     end
   end
@@ -121,9 +124,7 @@ function Fish:moveFish(direction, dt)
     -- Have fish face left if moving left
     self.faceDirection = -1
     self.x = self.x - self.moveSpeed * dt
-  end
-  
-  if direction == 'right' then
+  elseif direction == 'right' then
     -- Have player face right if moving right
     self.faceDirection = 1
     self.x = self.x + self.moveSpeed * dt
@@ -133,12 +134,12 @@ function Fish:moveFish(direction, dt)
     -- Have fish point up a bit when moving up
     self.currentRotation = -self.moveRotation * self.faceDirection
     self.y = self.y - self.moveSpeed * dt
-  end
-  
-  if direction == 'down' then
+  elseif direction == 'down' then
     -- Have fish point down a bit when moving down
     self.currentRotation = self.moveRotation * self.faceDirection
     self.y = self.y + self.moveSpeed * dt
+  else
+    self.currentRotation = 0
   end
   
   -- Have fish wrap around screen to other side if they reach the end of the play area
