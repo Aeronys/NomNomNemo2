@@ -26,9 +26,9 @@ function Fish:new(x, y, sizeMod, imagePath)
   self.state = 'neutral'
   self.directions = {'left', 'right', 'up', 'down'}
   self.states = {
-    ['neutral'] = {['moveSpeed'] = 50, ['direction'] = 0},
-    ['retreat'] = {['moveSpeed'] = 150, ['direction'] = 0},
-    ['attack'] = {['moveSpeed'] = 100, ['direction'] = 1}
+    ['neutral'] = {['moveSpeed'] = 50},
+    ['retreat'] = {['moveSpeed'] = 150},
+    ['attack'] = {['moveSpeed'] = 100}
   }
 end
 
@@ -41,8 +41,23 @@ function Fish:draw()
 end
 
 function Fish:detectPlayer(player)
-  local xDistance = self.x - player.x
-  local yDistance = self.y - player.y
+  self:getSides()
+  player:getSides()
+  
+  local xDistance = 0
+  if self.right < player.left then
+    xDistance = player.left - self.right
+  elseif self.left > player.right then
+    xDistance = self.left - player.right 
+  end
+  
+  local yDistance = 0
+  if self.top > player.bottom then
+    yDistance = self.top - player.bottom
+  elseif self.bottom < player.top then
+    yDistance = player.top - self.bottom
+  end
+  
   local distance = math.sqrt(xDistance ^ 2 + yDistance ^ 2)
   if distance <= self.detectDistance then
     if player.realSize >= self.realSize then
@@ -188,4 +203,11 @@ function Fish:updateDimensions()
   self.realWidth, self.realHeight, self.realX, self.realY, self.realSize = self:getRealDimensions()
   self.sizedWidth = self.width * self.sizeModifier
   self.sizedHeight = self.height * self.sizeModifier
+end
+
+function Fish:getSides()
+  self.left = self.x - self.realWidth / 2
+  self.right = self.x + self.realWidth / 2
+  self.top = self.y - self.realHeight / 2
+  self.bottom = self.y + self.realHeight / 2
 end

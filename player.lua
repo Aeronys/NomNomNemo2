@@ -31,7 +31,9 @@ end
 
 -- The player is the only one we care about having collisions for now
 function Player:checkCollision(other)
-  self.left = self.x - self.realWidth / 2
+  self:getSides()
+  other:getSides()
+  --[[self.left = self.x - self.realWidth / 2
   self.right = self.x + self.realWidth / 2
   self.top = self.y - self.realHeight / 2
   self.bottom = self.y + self.realHeight / 2
@@ -39,7 +41,7 @@ function Player:checkCollision(other)
   other.left = other.x - other.realWidth / 2
   other.right = other.x + other.realWidth / 2
   other.top = other.y - other.realHeight / 2
-  other.bottom = other.y + other.realHeight / 2
+  other.bottom = other.y + other.realHeight / 2--]]
   
   return self.right > other.left
   and self.left < other.right

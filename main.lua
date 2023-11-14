@@ -14,7 +14,7 @@ function love.load()
   
   player = Player(playAreaWidth/2, playAreaHeight/2, 1)
   fishies = {}
-  startingFishAmount = 25
+  startingFishAmount = 20
   
   seaBedImages = {}
   seaBedImageCount = 16
