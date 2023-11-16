@@ -11,15 +11,10 @@ function love.load()
   love.graphics.setBackgroundColor(.1, .5, 1)
   
   playAreaWidth = 5000
-  playAreaHeight = 768
+  playAreaHeight = 1000
   
   screenWidth = love.graphics.getWidth()
   screenHeight = love.graphics.getHeight()
-  
-  playerStartSize = 1
-  player = Player(playAreaWidth/2, playAreaHeight/2, playerStartSize)
-  fishies = {}
-  startingFishAmount = 50
   
   seaBedImages = {}
   seaBedImageCount = 16
@@ -34,6 +29,11 @@ function love.load()
   seaBedWidth = seaBedImages[1]:getWidth()
   
   seaBed = randomizeSeaBed()
+    
+  playerStartSize = 1
+  player = Player(playAreaWidth / 2, playAreaHeight - seaBedHeight - 200, playerStartSize)
+  fishies = {}
+  startingFishAmount = 50
   
   -- Populate game area with random fish
   for i = 1, startingFishAmount do
@@ -64,10 +64,11 @@ function love.draw()
     love.graphics.translate(i * playAreaWidth, 0)
     
     -- Have the camera follow the fish, but don't have it go below our seabed
-    if player.y <= screenHeight / 2 then
-      love.graphics.translate((-player.x + screenWidth / 2), -player.y + screenHeight / 2)
+    if player.y <= screenHeight / 2 + (playAreaHeight - screenHeight)  then
+      love.graphics.translate(-player.x + screenWidth / 2, -player.y + screenHeight / 2)
     else
-      love.graphics.translate((-player.x + screenWidth / 2), playAreaHeight - screenHeight)
+      -- Fixed y-axis translation after a certain point so that we don't scroll below our seabed
+      love.graphics.translate(-player.x + screenWidth / 2, -(playAreaHeight - screenHeight))
     end
 
     -- Draw the player
