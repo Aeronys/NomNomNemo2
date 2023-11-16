@@ -5,17 +5,21 @@ function love.load()
   require "entity"
   require "fish"
   require "player"
+  require "conf"
   
   --Set backround to a sea color
   love.graphics.setBackgroundColor(.1, .5, 1)
   
-  playAreaWidth = love.graphics.getWidth()
-  playAreaHeight = love.graphics.getHeight()
+  playAreaWidth = 5000
+  playAreaHeight = 768
+  
+  screenWidth = love.graphics.getWidth()
+  screenHeight = love.graphics.getHeight()
   
   playerStartSize = 1
   player = Player(playAreaWidth/2, playAreaHeight/2, playerStartSize)
   fishies = {}
-  startingFishAmount = 20
+  startingFishAmount = 50
   
   seaBedImages = {}
   seaBedImageCount = 16
@@ -54,16 +58,29 @@ function love.update(dt)
 end
 
 function love.draw()
-  -- Draw the player
-  player:draw()
-  
-  -- Draw all other fish
-  for i, v in ipairs(fishies) do
-    v:draw()
+  --Draw 3 copies of everything so that we can continuously wrap around the screen without any gaps
+  for i = -1, 1 do
+    love.graphics.origin()
+    love.graphics.translate(i * playAreaWidth, 0)
+    
+    -- Have the camera follow the fish, but don't have it go below our seabed
+    if player.y <= screenHeight / 2 then
+      love.graphics.translate((-player.x + screenWidth / 2), -player.y + screenHeight / 2)
+    else
+      love.graphics.translate((-player.x + screenWidth / 2), playAreaHeight - screenHeight)
+    end
+
+    -- Draw the player
+    player:draw()
+    
+    -- Draw all other fish
+    for i, v in ipairs(fishies) do
+      v:draw()
+    end
+    
+    -- Draw sea bed
+    drawSeaBed(seaBed)
   end
-  
-  -- Draw sea bed
-  drawSeaBed(seaBed)
 end
 
 -- Generates a random fish to be added into the level

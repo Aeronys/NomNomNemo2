@@ -20,15 +20,15 @@ function Fish:new(x, y, sizeMod, imagePath)
   self.moveTime = love.math.random(self.minMoveTime, self.maxMoveTime)
   self.timer = self.moveTime
   
-  self.detectDistance = 50
+  self.detectDistance = 75
   self.escapeDistance = 150
   
   self.state = 'neutral'
   self.directions = {'left', 'right', 'up', 'down'}
   self.states = {
     ['neutral'] = {['moveSpeed'] = 50},
-    ['retreat'] = {['moveSpeed'] = 150},
-    ['attack'] = {['moveSpeed'] = 100}
+    ['retreat'] = {['moveSpeed'] = 135},
+    ['attack'] = {['moveSpeed'] = 150}
   }
 end
 
