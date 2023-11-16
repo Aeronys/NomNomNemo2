@@ -87,7 +87,7 @@ end
 -- Generates a random fish to be added into the level
 function addRandomFish()
   local fishX = love.math.random(playAreaWidth)
-  local fishY = love.math.random(playAreaHeight)
+  local fishY = love.math.random(playAreaHeight - seaBedHeight - 20)
   local fishSize = 1 + love.math.random()
   return Fish(fishX, fishY, fishSize, 'images/PNG/Default size/fishTile_075.png')
 end
