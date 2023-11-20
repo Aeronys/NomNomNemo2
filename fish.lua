@@ -1,4 +1,5 @@
 --This object will be used for all fish drawn
+require "alert"
 Fish = Entity:extend()
 
 function Fish:new(x, y, sizeMod, imagePath)
@@ -32,9 +33,7 @@ function Fish:new(x, y, sizeMod, imagePath)
     ['alert'] = {['moveSpeed'] = 0}
   }
   
-  self.alert = love.graphics.newImage('images/PNG/Default size/fishTile_127.png')
-  self.alertTimer = 0
-  self.alertCompleteTime = 1
+  self.alertDuration = 1
 end
 
 function Fish:update(dt)
@@ -45,7 +44,7 @@ function Fish:draw()
   love.graphics.draw(self.image, self.x, self.y, self.currentRotation, self.sizeModifier * self.faceDirection, self.sizeModifier, self.width / 2, self.height / 2)
   
   if self.state == 'alert' then
-    love.graphics.draw(self.alert, self.x - 10, self.top - 25, 0, .35)
+    love.graphics.draw(self.alert.image, self.alert.x, self.alert.y, 0, self.alert.sizeMod)
   end
 end
 
@@ -77,6 +76,7 @@ function Fish:detectPlayer(player)
         self.state = 'retreat'
       elseif player.realSize < self.realSize and self.state ~= 'alert' and self.state ~= 'attack' then
         self.state = 'alert'
+        self.alert = Alert(self.x - 10, self.top - 25, self.alertDuration)
       end
     elseif distance >= self.escapeDistance then
       self.state = 'neutral'
@@ -129,7 +129,7 @@ function Fish:animateFish(dt)
     end
     
   elseif self.state == 'alert' then
-    self.alertTimer = self.alertTimer + dt
+    self.alert.timer = self.alert.timer + dt
     -- Have fish face the player when alerted to their presence
     if player.x >= self.x then
       self.faceDirection = 1
@@ -137,9 +137,9 @@ function Fish:animateFish(dt)
       self.faceDirection = -1
     end
     
-    if self.alertTimer >= self.alertCompleteTime then
+    if self.alert.timer >= self.alert.duration then
       self.state = 'attack'
-      self.alertTimer = 0
+      self.alert.timer = 0
     end
   end
 end

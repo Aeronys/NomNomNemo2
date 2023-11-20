@@ -1,11 +1,9 @@
 io.stdout:setvbuf("no")
 
 function love.load()
-  Object = require "classic"
   require "entity"
   require "fish"
   require "player"
-  require "conf"
   
   --Set backround to a sea color
   love.graphics.setBackgroundColor(.1, .5, 1)
