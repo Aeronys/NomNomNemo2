@@ -3,6 +3,7 @@ require "alert"
 Fish = Entity:extend()
 
 function Fish:new(x, y, sizeMod, imagePath)
+  imagePath = imagePath or 'images/PNG/Default size/fishTile_075.png'
   Fish.super.new(self, x, y, imagePath)
   
   self.sizeModifier = sizeMod

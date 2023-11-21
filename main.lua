@@ -3,6 +3,7 @@ io.stdout:setvbuf("no")
 function love.load()
   require "entity"
   require "fish"
+  require "stealthFish"
   require "player"
   
   --Set backround to a sea color
@@ -84,10 +85,15 @@ end
 
 -- Generates a random fish to be added into the level
 function addRandomFish()
+  local fishType = love.math.random(2)
   local fishX = love.math.random(playAreaWidth)
   local fishY = love.math.random(playAreaHeight - seaBedHeight - 20)
   local fishSize = 1 + love.math.random()
-  return Fish(fishX, fishY, fishSize, 'images/PNG/Default size/fishTile_075.png')
+  if fishType == 1 then
+    return Fish(fishX, fishY, fishSize)
+  elseif fishType == 2 then
+    return StealthFish(fishX, fishY, fishSize)
+  end
 end
 
 -- Print a single tile
