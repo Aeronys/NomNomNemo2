@@ -43,7 +43,7 @@ end
 
 function Fish:draw()
   love.graphics.draw(self.image, self.x, self.y, self.currentRotation, self.sizeModifier * self.faceDirection, self.sizeModifier, self.width / 2, self.height / 2)
-  
+
   if self.state == 'alert' then
     love.graphics.draw(self.alert.image, self.alert.x, self.alert.y, 0, self.alert.sizeMod)
   end
@@ -76,11 +76,10 @@ function Fish:detectPlayer(player)
       if player.realSize >= self.realSize then
         self.state = 'retreat'
       elseif player.realSize < self.realSize and self.state ~= 'alert' and self.state ~= 'attack' then
-        self.state = 'alert'
-        self.alert = Alert(self.x - 10, self.top - 25, self.alertDuration)
+        self:setAlert()
       end
     elseif distance >= self.escapeDistance then
-      self.state = 'neutral'
+      self:setNeutral()
     end
   end
 end
@@ -130,7 +129,7 @@ function Fish:animateFish(dt)
     end
     
   elseif self.state == 'alert' then
-    self.alert.timer = self.alert.timer + dt
+     self.alert.timer = self.alert.timer + dt
     -- Have fish face the player when alerted to their presence
     if player.x >= self.x then
       self.faceDirection = 1
@@ -139,10 +138,26 @@ function Fish:animateFish(dt)
     end
     
     if self.alert.timer >= self.alert.duration then
-      self.state = 'attack'
-      self.alert.timer = 0
+      self:setAttack()
     end
   end
+end
+
+-- Puts fish into alert state and sets necessary parameters
+function Fish:setAlert()
+  self.state = 'alert'
+  self.alert = Alert(self.x - 10, self.top - 25, self.alertDuration)
+end
+
+-- Puts fish into neutral state and sets necessary parameters
+function Fish:setNeutral()
+  self.state = 'neutral'
+end
+
+-- Puts fish into attack state and sets necessary parameters
+function Fish:setAttack()
+  self.state = 'attack'
+  self.alert.timer = 0
 end
   
 function Fish:moveFish(direction, dt)
