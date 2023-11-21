@@ -9,31 +9,17 @@ function StealthFish:new(x, y, sizeMod)
   self.detectDistance = 100
   self.escapeDistance = 180
   
-  -- Stealth fish are usually hard to see, but reveal themselves when you get close
-  self.stealthColor = {1, 1, 1, .1}
-  self.visibleColor = {1, 1, 1, 1}
-  self.currentColor = self.stealthColor
-  
+  -- Stealth fish are usually hard to see, but reveal themselves when you get close  
   self.states = {
-    ['neutral'] = {['moveSpeed'] = 100},
-    ['retreat'] = {['moveSpeed'] = 220},
-    ['attack'] = {['moveSpeed'] = 260},
-    ['alert'] = {['moveSpeed'] = 0}
+    ['neutral'] = {['moveSpeed'] = 100, ['color'] = {1, 1, 1, .1}},
+    ['retreat'] = {['moveSpeed'] = 220, ['color'] = {1, 1, 1, .05}},
+    ['attack'] = {['moveSpeed'] = 260, ['color'] = {1, 1, 1, 1}},
+    ['alert'] = {['moveSpeed'] = 0, ['color'] = {1, 1, 1, 1}}
   }
 end
 
 function StealthFish:draw()
-  love.graphics.setColor(self.currentColor)
+  love.graphics.setColor(self.states[self.state]['color'])
   StealthFish.super.draw(self)
-  love.graphics.setColor(self.visibleColor)
-end
-
-function StealthFish:setAlert()
-  StealthFish.super.setAlert(self)
-  self.currentColor = self.visibleColor
-end
-
-function StealthFish:setNeutral()
-  StealthFish.super.setNeutral(self)
-  self.currentColor = self.stealthColor
+  love.graphics.setColor(1, 1, 1, 1)
 end
