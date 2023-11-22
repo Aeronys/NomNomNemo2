@@ -35,6 +35,7 @@ function Fish:new(x, y, sizeMod, imagePath)
   }
   
   self.alertDuration = 1
+
 end
 
 function Fish:update(dt)

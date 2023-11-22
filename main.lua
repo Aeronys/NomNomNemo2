@@ -15,6 +15,12 @@ function love.load()
   screenWidth = love.graphics.getWidth()
   screenHeight = love.graphics.getHeight()
   
+  sky = {
+    ['height'] = screenHeight / 2,
+    ['width'] = playAreaWidth,
+    ['color'] = {.8, 1, 1}
+    }
+  
   seaBedImages = {}
   seaBedImageCount = 16
   
@@ -69,7 +75,10 @@ function love.draw()
       -- Fixed y-axis translation after a certain point so that we don't scroll below our seabed
       love.graphics.translate(-player.x + screenWidth / 2, -(playAreaHeight - screenHeight))
     end
-
+    
+    -- Draw the sky
+    drawSky()
+    
     -- Draw the player
     player:draw()
     
@@ -80,6 +89,7 @@ function love.draw()
     
     -- Draw sea bed
     drawSeaBed(seaBed)
+    
   end
 end
 
@@ -96,6 +106,13 @@ function addRandomFish()
   end
 end
 
+-- Draws a rectangle at the top of the screen, representing the sky
+function drawSky()
+  love.graphics.setColor(sky['color'])
+  love.graphics.rectangle("fill", 0, -screenHeight / 2, sky['width'], sky['height'])
+  love.graphics.setColor(1, 1, 1, 1)
+end
+
 -- Print a single tile
 function drawTile(image, x, y)
   love.graphics.draw(image, x, y)
@@ -103,6 +120,7 @@ end
 
 -- Print out our previously generated list of sea bed tiles
 function drawSeaBed(seaBed)
+  -- Determines y location of where we will draw our seabed tiles
   local y = playAreaHeight - seaBedHeight
 
   for i,v in ipairs(seaBed) do
