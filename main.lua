@@ -12,6 +12,18 @@ function love.load()
   playAreaWidth = 5000
   playAreaHeight = 1000
   
+  -- We set here our boundaries for where each type of fish can be spawned
+  fishTypes = {
+    {['Type'] = 'Fish', ['upperBound'] = 0, ['lowerBound'] = 500},
+    {['Type'] = 'StealthFish', ['upperBound'] = 250, ['lowerBound'] = 1000},
+    {['Type'] = 'GreenFish'},
+    {['Type'] = 'RedFish'},
+    {['Type'] = 'Eel'}
+    }
+  
+  --fishTypes = {{'Fish', 'Eel'}, {'ThreeferFish', 'Puff'}, {'PufferFish', 'Avocado'}}
+  print(fishTypes[1])
+  
   screenWidth = love.graphics.getWidth()
   screenHeight = love.graphics.getHeight()
   
@@ -36,7 +48,7 @@ function love.load()
   seaBed = randomizeSeaBed()
     
   playerStartSize = 1
-  player = Player(playAreaWidth / 2, playAreaHeight - seaBedHeight - 200, playerStartSize)
+  player = Player(playAreaWidth / 2, 200, playerStartSize)
   fishies = {}
   startingFishAmount = 50
   
@@ -96,9 +108,11 @@ end
 -- Generates a random fish to be added into the level
 function addRandomFish()
   local fishType = love.math.random(2)
-  local fishX = love.math.random(playAreaWidth)
-  local fishY = love.math.random(playAreaHeight - seaBedHeight - 20)
   local fishSize = 1 + love.math.random()
+  local fishX = love.math.random(playAreaWidth)
+  local fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
+  
+  -- We call different classes based on which fish we randomized
   if fishType == 1 then
     return Fish(fishX, fishY, fishSize)
   elseif fishType == 2 then

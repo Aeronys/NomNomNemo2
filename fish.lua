@@ -1,7 +1,7 @@
 --This object will be used for all fish drawn
 require "alert"
 Fish = Entity:extend()
-
+  
 function Fish:new(x, y, sizeMod, imagePath)
   imagePath = imagePath or 'images/PNG/Default size/fishTile_075.png'
   Fish.super.new(self, x, y, imagePath)
@@ -35,7 +35,6 @@ function Fish:new(x, y, sizeMod, imagePath)
   }
   
   self.alertDuration = 1
-
 end
 
 function Fish:update(dt)
