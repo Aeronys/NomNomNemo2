@@ -17,8 +17,8 @@ function love.load()
   -- We set here our boundaries for where each type of fish can be spawned
   -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
   fishTypes = {
-    {['Type'] = 'Fish', ['upperBound'] = 0, ['lowerBound'] = 1500},
-    {['Type'] = 'StealthFish', ['upperBound'] = 1200, ['lowerBound'] = 3000},
+    {['Type'] = 'Fish', ['upperBound'] = 0, ['lowerBound'] = 2500},
+    {['Type'] = 'StealthFish', ['upperBound'] = 1000, ['lowerBound'] = 4000},
     {['Type'] = 'GreenFish', ['upperBound'] = 3000, ['lowerBound'] = 5000},
     {['Type'] = 'BigFish', ['upperBound'] = 4000, ['lowerBound'] = 6000},
     {['Type'] = 'Eel'}
@@ -50,7 +50,7 @@ function love.load()
   playerStartSize = 1
   player = Player(playAreaWidth / 2, 200, playerStartSize)
   fishies = {}
-  startingFishAmount = 300
+  startingFishAmount = 400
   
   -- Populate game area with random fish
   for i = 1, startingFishAmount do
