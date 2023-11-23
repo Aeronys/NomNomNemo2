@@ -4,7 +4,8 @@ function love.load()
   require "entity"
   require "fish"
   require "bigFish"
-  require "greenfish"
+  require "greenFish"
+  require "pufferFish"
   require "stealthFish"
   require "player"
   
@@ -12,16 +13,16 @@ function love.load()
   love.graphics.setBackgroundColor(.1, .5, 1)
   
   playAreaWidth = 5000
-  playAreaHeight = 6000
+  playAreaHeight = 7000
   
   -- We set here our boundaries for where each type of fish can be spawned
   -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
   fishTypes = {
     {['Type'] = 'Fish', ['upperBound'] = 0, ['lowerBound'] = 2500},
     {['Type'] = 'StealthFish', ['upperBound'] = 1000, ['lowerBound'] = 4000},
-    {['Type'] = 'GreenFish', ['upperBound'] = 3000, ['lowerBound'] = 5000},
-    {['Type'] = 'BigFish', ['upperBound'] = 4000, ['lowerBound'] = 6000},
-    {['Type'] = 'Eel'}
+    {['Type'] = 'GreenFish', ['upperBound'] = 3000, ['lowerBound'] = 5500},
+    {['Type'] = 'BigFish', ['upperBound'] = 4000, ['lowerBound'] = 7000},
+    {['Type'] = 'PufferFish', ['upperBound'] = 2000, ['lowerBound'] = 7000}
     }
   
   screenWidth = love.graphics.getWidth()
@@ -50,7 +51,7 @@ function love.load()
   playerStartSize = 1
   player = Player(playAreaWidth / 2, 200, playerStartSize)
   fishies = {}
-  startingFishAmount = 400
+  startingFishAmount = 500
   
   -- Populate game area with random fish
   for i = 1, startingFishAmount do
@@ -107,7 +108,7 @@ end
 
 -- Generates a random fish to be added into the level
 function addRandomFish()
-  local fishType = love.math.random(4)
+  local fishType = love.math.random(#fishTypes)
   local fishSize = 1 + love.math.random()
   local fishX = love.math.random(playAreaWidth)
   local fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
@@ -121,6 +122,8 @@ function addRandomFish()
     return GreenFish(fishX, fishY, fishSize)
   elseif fishType == 4 then
     return BigFish(fishX, fishY, fishSize)
+  elseif fishType == 5 then
+    return PufferFish(fishX, fishY, fishSize)
   end
 end
 
