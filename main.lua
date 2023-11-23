@@ -3,6 +3,8 @@ io.stdout:setvbuf("no")
 function love.load()
   require "entity"
   require "fish"
+  require "bigFish"
+  require "greenfish"
   require "stealthFish"
   require "player"
   
@@ -10,19 +12,17 @@ function love.load()
   love.graphics.setBackgroundColor(.1, .5, 1)
   
   playAreaWidth = 5000
-  playAreaHeight = 1000
+  playAreaHeight = 6000
   
   -- We set here our boundaries for where each type of fish can be spawned
+  -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
   fishTypes = {
-    {['Type'] = 'Fish', ['upperBound'] = 0, ['lowerBound'] = 500},
-    {['Type'] = 'StealthFish', ['upperBound'] = 250, ['lowerBound'] = 1000},
-    {['Type'] = 'GreenFish'},
-    {['Type'] = 'RedFish'},
+    {['Type'] = 'Fish', ['upperBound'] = 0, ['lowerBound'] = 1500},
+    {['Type'] = 'StealthFish', ['upperBound'] = 1200, ['lowerBound'] = 3000},
+    {['Type'] = 'GreenFish', ['upperBound'] = 3000, ['lowerBound'] = 5000},
+    {['Type'] = 'BigFish', ['upperBound'] = 4000, ['lowerBound'] = 6000},
     {['Type'] = 'Eel'}
     }
-  
-  --fishTypes = {{'Fish', 'Eel'}, {'ThreeferFish', 'Puff'}, {'PufferFish', 'Avocado'}}
-  print(fishTypes[1])
   
   screenWidth = love.graphics.getWidth()
   screenHeight = love.graphics.getHeight()
@@ -50,7 +50,7 @@ function love.load()
   playerStartSize = 1
   player = Player(playAreaWidth / 2, 200, playerStartSize)
   fishies = {}
-  startingFishAmount = 50
+  startingFishAmount = 300
   
   -- Populate game area with random fish
   for i = 1, startingFishAmount do
@@ -107,7 +107,7 @@ end
 
 -- Generates a random fish to be added into the level
 function addRandomFish()
-  local fishType = love.math.random(2)
+  local fishType = love.math.random(4)
   local fishSize = 1 + love.math.random()
   local fishX = love.math.random(playAreaWidth)
   local fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
@@ -117,6 +117,10 @@ function addRandomFish()
     return Fish(fishX, fishY, fishSize)
   elseif fishType == 2 then
     return StealthFish(fishX, fishY, fishSize)
+  elseif fishType == 3 then
+    return GreenFish(fishX, fishY, fishSize)
+  elseif fishType == 4 then
+    return BigFish(fishX, fishY, fishSize)
   end
 end
 

@@ -106,7 +106,8 @@ function Fish:animateFish(dt)
       self:moveFish(self.directions[self.moveDirection], dt)
     end
   
-  -- If the fish is in a retreat state, it will try to move away from the player
+  -- If the fish is in a retreat state, it will try to move away from the 
+  -- TODO: Need to fix it so they still run away when they reach the "edge" of the playing area
   elseif self.state == 'retreat' then
     if player.left >= self.right then
       self:moveFish('left', dt)
