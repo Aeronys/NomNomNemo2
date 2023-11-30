@@ -9,6 +9,7 @@ function Player:new(x, y, sizeMod)
   self.xp = 0
   self.levelUps = {1, 5, 15, 150, 500, 1500, 3000, 8000, 15000, 25000, 35000, 60000, 100000}
   self.stealth = 0
+  self.upgrades = Upgrades()
 end
 
 
@@ -57,7 +58,7 @@ end
 
 function Player:levelUp()
   self.level = self.level + 1
-  Upgrades:chooseUpgrade(self)
-  Upgrades:grow(self)
+  self.upgrades:chooseUpgrade(self)
+  self.upgrades:grow(self)
 end
   

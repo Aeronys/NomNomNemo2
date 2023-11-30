@@ -119,7 +119,7 @@ function love.draw()
       drawPlayerTable()
       
       if upgrading then
-        drawLevelUp()
+        player.upgrades:draw()
       end
     end
   end
@@ -145,19 +145,6 @@ function addRandomFish()
     return PufferFish(fishX, fishY, fishSize)
   end
 end
-
-function drawLevelUp()
-  local width = 500
-        local height = 300
-        local xPos = screenWidth / 2 - width / 2
-        local yPos = screenHeight / 2 - height / 2
-        love.graphics.setColor(.5, .5, .5)
-        love.graphics.rectangle('fill', xPos, yPos, width, height)
-        love.graphics.setColor(1, 1, 1)
-        love.graphics.printf('Level up!', Font24, xPos, yPos + 20, width, 'center')
-        love.graphics.printf('Choose your upgrade:', Font15, xPos, yPos + 70, width, 'center')
-        
-  end
   
 function drawPlayerTable()
   local tableXPos = 10
@@ -190,7 +177,7 @@ function drawSeaBed(seaBed)
   end
 end
 
--- Choose random sea bed tiles and insert them into a table which will reperesent our seabed
+-- Choose random sea bed tiles and insert them into a table which will represent our seabed
 function randomizeSeaBed()
   local seaBed = {}
   
