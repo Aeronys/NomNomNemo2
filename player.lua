@@ -1,9 +1,14 @@
 -- Player is a fish, so we will extend this class
 Player = Fish:extend()
+require "upgrades"
 
 function Player:new(x, y, sizeMod)
   Player.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_081.png')
   self.moveSpeed = 200
+  self.level = 1
+  self.xp = 0
+  self.levelUps = {1, 5, 15, 150, 500, 1500, 3000, 8000, 15000, 25000, 35000, 60000, 100000}
+  self.stealth = 0
 end
 
 
@@ -41,9 +46,18 @@ function Player:checkCollision(other)
   and self.bottom > other.top
 end
 
-function Player:grow(growAmount)
-  self.sizeModifier = self.sizeModifier + growAmount
+function Player:processXP(other)
+  self.xp = self.xp + other.xp
   
-  -- New size means real and sized dimensions need to be updated
-  self:updateDimensions()
+  -- While loop is used in case multiple level ups occur at once, although this should never occur
+  while self.xp >= self.levelUps[self.level] do
+    self:levelUp()
+  end
 end
+
+function Player:levelUp()
+  self.level = self.level + 1
+  Upgrades:chooseUpgrade(self)
+  Upgrades:grow(self)
+end
+  

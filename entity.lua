@@ -1,4 +1,3 @@
-Object = require "classic"
 Entity = Object:extend()
 
 function Entity:new(x, y, imagePath)

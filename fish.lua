@@ -34,6 +34,8 @@ function Fish:new(x, y, sizeMod, imagePath)
     ['alert'] = {['moveSpeed'] = 0}
   }
   
+  self.xp = 1
+  self.xp = self.xp * self.sizeModifier
   self.alertDuration = 1
 end
 
@@ -72,7 +74,7 @@ function Fish:detectPlayer(player)
     end
     
     local distance = math.sqrt(self.xDistance ^ 2 + self.yDistance ^ 2)
-    if distance <= self.detectDistance then
+    if distance <= self.detectDistance - player.stealth then
       if player.realSize >= self.realSize then
         self.state = 'retreat'
       elseif player.realSize < self.realSize and self.state ~= 'alert' and self.state ~= 'attack' then

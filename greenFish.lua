@@ -2,11 +2,11 @@ GreenFish = Fish:extend()
 
 function GreenFish:new(x, y, sizeMod)
   sizeMod = sizeMod + .2
+  self.xp = 100
   GreenFish.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_073.png')
   
   self.minMoveTime = 50
   self.maxMoveTime = 300
-  
   self.detectDistance = 50
   self.escapeDistance = 300
   

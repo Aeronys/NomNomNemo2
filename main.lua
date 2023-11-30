@@ -1,6 +1,7 @@
 io.stdout:setvbuf("no")
 
 function love.load()
+  Object = require "classic"
   require "entity"
   require "fish"
   require "bigFish"
@@ -12,6 +13,13 @@ function love.load()
   --Set backround to a sea color
   love.graphics.setBackgroundColor(.1, .5, 1)
   
+  Font24 = love.graphics.newFont(24)
+  Font15 = love.graphics.newFont(15)
+  defaultFont = love.graphics.newFont(12)
+  
+  pause = false
+  upgrading = false
+  
   playAreaWidth = 5000
   playAreaHeight = 7000
   
@@ -22,7 +30,7 @@ function love.load()
     {['Type'] = 'StealthFish', ['upperBound'] = 1000, ['lowerBound'] = 4000},
     {['Type'] = 'GreenFish', ['upperBound'] = 3000, ['lowerBound'] = 5500},
     {['Type'] = 'BigFish', ['upperBound'] = 4000, ['lowerBound'] = 7000},
-    {['Type'] = 'PufferFish', ['upperBound'] = 2000, ['lowerBound'] = 7000}
+    {['Type'] = 'PufferFish', ['upperBound'] = 1500, ['lowerBound'] = 7000}
     }
   
   screenWidth = love.graphics.getWidth()
@@ -52,6 +60,7 @@ function love.load()
   player = Player(playAreaWidth / 2, 200, playerStartSize)
   fishies = {}
   startingFishAmount = 500
+  maxFishAmount = 10000
   
   -- Populate game area with random fish
   for i = 1, startingFishAmount do
@@ -60,49 +69,59 @@ function love.load()
 end
 
 function love.update(dt)
-  player:update(dt)
-  
-  -- Check for collisions between player and other fish
-  for fishIndex, fish in ipairs(fishies) do
-    if player:checkCollision(fish) then
-      resolveCollision(player, fish, fishIndex)
+  if not pause then
+    player:update(dt)
+    
+    -- Check for collisions between player and other fish
+    for fishIndex, fish in ipairs(fishies) do
+      if player:checkCollision(fish) then
+        resolveCollision(player, fish, fishIndex)
+      end
     end
-  end
-  
-  for fishIndex, fish in ipairs(fishies) do
-    fish:detectPlayer(player)
-    fish:update(dt)
+    
+    for fishIndex, fish in ipairs(fishies) do
+      fish:detectPlayer(player)
+      fish:update(dt)
+    end
   end
 end
 
 function love.draw()
-  --Draw 3 copies of everything so that we can continuously wrap around the screen without any gaps
-  for i = -1, 1 do
-    love.graphics.origin()
-    love.graphics.translate(i * playAreaWidth, 0)
-    
-    -- Have the camera follow the fish, but don't have it go below our seabed
-    if player.y <= screenHeight / 2 + (playAreaHeight - screenHeight)  then
-      love.graphics.translate(-player.x + screenWidth / 2, -player.y + screenHeight / 2)
-    else
-      -- Fixed y-axis translation after a certain point so that we don't scroll below our seabed
-      love.graphics.translate(-player.x + screenWidth / 2, -(playAreaHeight - screenHeight))
+  if not pauseDraw then
+    --Draw 3 copies of everything so that we can continuously wrap around the screen without any gaps
+    for i = -1, 1 do
+      love.graphics.origin()
+      love.graphics.translate(i * playAreaWidth, 0)
+      
+      -- Have the camera follow the fish, but don't have it go below our seabed
+      if player.y <= screenHeight / 2 + (playAreaHeight - screenHeight)  then
+        love.graphics.translate(-player.x + screenWidth / 2, -player.y + screenHeight / 2)
+      else
+        -- Fixed y-axis translation after a certain point so that we don't scroll below our seabed
+        love.graphics.translate(-player.x + screenWidth / 2, -(playAreaHeight - screenHeight))
+      end
+      
+      -- Draw the sky
+      drawSky()
+      
+      -- Draw the player
+      player:draw()
+      
+      -- Draw all other fish
+      for i, v in ipairs(fishies) do
+        v:draw()
+      end
+      
+      -- Draw sea bed
+      drawSeaBed(seaBed)
+      
+      -- Shows player's current level and experience points
+      drawPlayerTable()
+      
+      if upgrading then
+        drawLevelUp()
+      end
     end
-    
-    -- Draw the sky
-    drawSky()
-    
-    -- Draw the player
-    player:draw()
-    
-    -- Draw all other fish
-    for i, v in ipairs(fishies) do
-      v:draw()
-    end
-    
-    -- Draw sea bed
-    drawSeaBed(seaBed)
-    
   end
 end
 
@@ -127,6 +146,28 @@ function addRandomFish()
   end
 end
 
+function drawLevelUp()
+  local width = 500
+        local height = 300
+        local xPos = screenWidth / 2 - width / 2
+        local yPos = screenHeight / 2 - height / 2
+        love.graphics.setColor(.5, .5, .5)
+        love.graphics.rectangle('fill', xPos, yPos, width, height)
+        love.graphics.setColor(1, 1, 1)
+        love.graphics.printf('Level up!', Font24, xPos, yPos + 20, width, 'center')
+        love.graphics.printf('Choose your upgrade:', Font15, xPos, yPos + 70, width, 'center')
+        
+  end
+  
+function drawPlayerTable()
+  local tableXPos = 10
+  
+  -- Reset origin so table will always be in same spot on screen
+  love.graphics.origin()
+  love.graphics.print('Level: '..player.level, 10, screenHeight - 40)
+  love.graphics.print('XP: '..math.floor(player.xp)..'/'..player.levelUps[player.level], 10, screenHeight - 20)
+end
+    
 -- Draws a rectangle at the top of the screen, representing the sky
 function drawSky()
   love.graphics.setColor(sky['color'])
@@ -167,7 +208,15 @@ function resolveCollision(player, fish, fishIndex)
   -- If player is bigger, remove eaten fish and grow a little larger
   if player.realSize >= fish.realSize then
     table.remove(fishies, fishIndex)
-    player:grow(0.03)
+    player:processXP(fish)
+    
+    -- Every time we eat a fish, we add two more in its place
+    -- This keeps player from being able to focus too much on smaller fish
+    -- We put a max amount just to make sure we don't completely break the game
+    if #fishies < maxFishAmount then
+      table.insert(fishies, addRandomFish())
+      table.insert(fishies, addRandomFish())
+    end
   -- If other fish is bigger, reset the game
   else
     love.load()
@@ -179,5 +228,11 @@ end
 function love.keyreleased(key)
   if key == 'down' or key =='up' or key == 'w' or key == 's' then
     player.currentRotation = 0
+  end
+  
+  -- p will be our pause button
+  -- Check if we're upgrading so player can't unpause during upgrade screen
+  if key == 'p' and not upgrading then
+    pause = not pause
   end
 end
