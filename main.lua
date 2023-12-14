@@ -18,7 +18,6 @@ function love.load()
   defaultFont = love.graphics.newFont(12)
   
   pause = false
-  upgrading = false
   
   playAreaWidth = 5000
   playAreaHeight = 7000
@@ -118,9 +117,8 @@ function love.draw()
       -- Shows player's current level and experience points
       drawPlayerTable()
       
-      if upgrading then
-        player.upgrades:draw()
-      end
+      -- Draw upgrades table
+      player.upgrades:draw()
     end
   end
 end
@@ -223,3 +221,12 @@ function love.keyreleased(key)
     pause = not pause
   end
 end
+
+-- Select upgrades with left mouse button
+function love.mousereleased(mouseX, mouseY, button)
+  if upgrading then
+    if button == 1 then
+      player.upgrades:selectUpgrade(mouseX, mouseY, player)
+    end
+  end
+end    

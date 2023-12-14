@@ -1,13 +1,13 @@
 StealthFish = Fish:extend()
 
 function StealthFish:new(x, y, sizeMod)
-  self.xp = 10
   StealthFish.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_077.png')
+  self.xp = self.xp * 10
   
   self.minMoveTime = 100
   self.maxMoveTime = 700
-  self.detectDistance = 100
-  self.escapeDistance = 180
+  self.detectDistance = 120
+  self.escapeDistance = 210
   
   -- Stealth fish are usually hard to see, but reveal themselves when you get close  
   self.states = {

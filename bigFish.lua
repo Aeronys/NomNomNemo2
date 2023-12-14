@@ -3,8 +3,8 @@ BigFish = Fish:extend()
 function BigFish:new(x, y, sizeMod)
   -- Big fish are big, so increase their sizeMod by 1
   sizeMod = sizeMod + 1
-  self.xp = 1000
   BigFish.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_079.png')
+  self.xp = self.xp * 1000
   
   self.minMoveTime = 50
   self.maxMoveTime = 500
