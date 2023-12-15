@@ -19,6 +19,7 @@ function love.load()
   
   pause = false
   
+  gameTimer = 0
   playAreaWidth = 5000
   playAreaHeight = 7000
   
@@ -29,7 +30,7 @@ function love.load()
     {['Type'] = 'StealthFish', ['upperBound'] = 1000, ['lowerBound'] = 4000},
     {['Type'] = 'GreenFish', ['upperBound'] = 3000, ['lowerBound'] = 5500},
     {['Type'] = 'BigFish', ['upperBound'] = 4000, ['lowerBound'] = 7000},
-    {['Type'] = 'PufferFish', ['upperBound'] = 1500, ['lowerBound'] = 7000}
+    {['Type'] = 'PufferFish', ['upperBound'] = 1500, ['lowerBound'] = 5800}
     }
   
   screenWidth = love.graphics.getWidth()
@@ -69,6 +70,7 @@ end
 
 function love.update(dt)
   if not pause then
+    gameTimer = gameTimer + dt
     player:update(dt)
     
     -- Check for collisions between player and other fish
