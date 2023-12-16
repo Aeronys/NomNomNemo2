@@ -2,8 +2,8 @@ PufferFish = Fish:extend()
 
 function PufferFish:new(x, y, sizeMod)
   PufferFish.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_101.png')
-  self.edible = false
   
+  self.type = 'Puffer'
   self.startPosition = self.y
   
   -- Randomize oscillation time and distance

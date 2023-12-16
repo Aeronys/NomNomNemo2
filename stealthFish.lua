@@ -1,5 +1,13 @@
 StealthFish = Fish:extend()
 
+-- Stealth fish are usually hard to see, but reveal themselves when you get close  
+  stealthColors = {
+    ['neutral'] = {1, 1, 1, .1},
+    ['retreat'] = {1, 1, 1, .05},
+    ['attack'] = {1, 1, 1, 1},
+    ['alert'] = {1, 1, 1, 1}
+  }
+  
 function StealthFish:new(x, y, sizeMod)
   StealthFish.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_077.png')
   self.xp = self.xp * 10
@@ -19,7 +27,7 @@ function StealthFish:new(x, y, sizeMod)
 end
 
 function StealthFish:draw()
-  love.graphics.setColor(self.states[self.state]['color'])
+  love.graphics.setColor(stealthColors[self.state])
   StealthFish.super.draw(self)
   love.graphics.setColor(1, 1, 1, 1)
 end

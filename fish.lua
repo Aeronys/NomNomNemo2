@@ -6,7 +6,6 @@ function Fish:new(x, y, sizeMod, imagePath)
   imagePath = imagePath or 'images/PNG/Default size/fishTile_075.png'
   Fish.super.new(self, x, y, imagePath)
   
-  self.edible = true
   self.sizeModifier = sizeMod
   self.currentRotation = 0
   self.moveRotation = 0.2

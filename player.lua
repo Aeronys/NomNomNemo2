@@ -7,8 +7,11 @@ function Player:new(x, y, sizeMod)
   self.moveSpeed = 200
   self.level = 1
   self.xp = 0
-  self.levelUps = {3, 10, 30, 75, 150, 250, 500, 1500, 3000, 8000, 15000, 25000, 35000, 60000, 100000}
+  self.max = 'MAX LEVEL'
+  self.levelUps = {3, 10, 25, 50, 100, 150, 250, 500, 1500, 3000, 8000, 15000, 25000, 35000, 60000, 100000, self.max}
   self.stealth = 0
+  self.pufferEdible = false
+  self.stealthDetection = 1
   self.upgrades = Upgrades()
 end
 
@@ -51,7 +54,7 @@ function Player:processXP(other)
   self.xp = self.xp + other.xp
   
   -- While loop is used in case multiple level ups occur at once, although this should never occur
-  while self.xp >= self.levelUps[self.level] do
+  while self.levelUps[self.level] ~= self.max and self.xp >= self.levelUps[self.level] do
     self:levelUp()
   end
 end

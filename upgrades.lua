@@ -50,15 +50,27 @@ function Upgrades:draw()
     love.graphics.printf('Level up!', Font24, self.xPos, self.yPos + 20, self.width, 'center')
     love.graphics.printf('Choose your upgrade:', Font15, self.xPos, self.yPos + 70, self.width, 'center')
     
-    
-    for i, v in ipairs(self.buttons) do
+    if self.specializing then
+      self:drawButtons(self.spButtons)
+    else
+      self:drawButtons(self.buttons)
+    end
+  end
+end
+
+function Upgrades:drawButtons(buttons)
+  -- Draw buttons from buttons list
+  for i, v in ipairs(buttons) do
       love.graphics.setColor(.3, .3, .3)
       love.graphics.rectangle('fill', v['xPos'], self.buttonYPos, self.buttonWidth, self.buttonHeight)
       love.graphics.setColor(1, 1, 1)
-      love.graphics.printf(v['Type'], v['xPos'], (self.buttonYPos + self.buttonHeight / 2) - 10, self.buttonWidth, 'center')
-    end
-    love.graphics.setColor(1, 1, 1)
+      love.graphics.printf(v['Type'], v['xPos'], (self.buttonYPos + self.buttonHeight / 2) - 15, self.buttonWidth, 'center')
   end
+  love.graphics.setColor(1, 1, 1)
+end
+
+function Upgrades:eatPuffer(fish)
+  fish.pufferEdible = true
 end
 
 function Upgrades:grow(fish)
@@ -66,6 +78,11 @@ function Upgrades:grow(fish)
   
   -- New size means real and sized dimensions need to be updated
   fish:updateDimensions()
+end
+
+function Upgrades:seeStealth(fish)
+  stealthColors['neutral'] = {1, 1, 1, .5}
+  stealthColors['retreat'] = {1, 1, 1, .3}
 end
 
 function Upgrades:speedUp(fish)
@@ -79,18 +96,27 @@ end
 function Upgrades:chooseUpgrade(fish)
   pause = true
   upgrading = true
-  specializing = true
+  
+  if fish.level == 5 then
+    self.specializing = true
+  end
 end
 
-function Upgrades:selectUpgrade(mouseX, mouseY, fish)
-  for i, v in ipairs(self.buttons) do
+function Upgrades:selectUpgrade(mouseX, mouseY, fish, buttons)
+  for i, v in ipairs(buttons) do
     if mouseX >= v['xPos'] and 
       mouseX <= v['xPos'] + self.buttonWidth and 
       mouseY >= self.buttonYPos and 
       mouseY <= self.buttonYPos + self.buttonHeight then
       
-      -- Selects upgrade from ordered upgrade list
-      upgradeList[i]['uFunction'](self, fish)
+      if self.specializing then
+        --Selects specialization from special list
+        specialList[i]['uFunction'](self, fish)
+        self.specializing = false
+      else
+        -- Selects upgrade from ordered upgrade list
+        upgradeList[i]['uFunction'](self, fish)
+      end
       
       -- Ends upgrading phase and resumes gameplay
       upgrading = false

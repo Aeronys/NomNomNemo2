@@ -17,11 +17,13 @@ function love.load()
   Font15 = love.graphics.newFont(15)
   defaultFont = love.graphics.newFont(12)
   
-  pause = false
-  
-  gameTimer = 0
+  -- Level dimensions
   playAreaWidth = 5000
   playAreaHeight = 7000
+  
+  -- Initialize game timer and pause status
+  gameTimer = 0
+  pause = false
   
   -- We set here our boundaries for where each type of fish can be spawned
   -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
@@ -36,6 +38,7 @@ function love.load()
   screenWidth = love.graphics.getWidth()
   screenHeight = love.graphics.getHeight()
   
+  -- Set variables needed to draw our sky later
   sky = {
     ['height'] = screenHeight / 2,
     ['width'] = playAreaWidth,
@@ -55,9 +58,12 @@ function love.load()
   seaBedWidth = seaBedImages[1]:getWidth()
   
   seaBed = randomizeSeaBed()
-    
+  
+  -- Initialize player
   playerStartSize = 1
   player = Player(playAreaWidth / 2, 200, playerStartSize)
+  
+  -- Create enemy fish table and set fish amounts
   fishies = {}
   startingFishAmount = 500
   maxFishAmount = 10000
@@ -192,19 +198,24 @@ function randomizeSeaBed()
 end
 
 function resolveCollision(player, fish, fishIndex)
-  -- If player is bigger, remove eaten fish and grow a little larger
-  if player.realSize >= fish.realSize and fish.edible then
-    table.remove(fishies, fishIndex)
-    player:processXP(fish)
-    
-    -- Every time we eat a fish, we add two more in its place
-    -- This keeps player from being able to focus too much on smaller fish
-    -- We put a max amount just to make sure we don't completely break the game
-    if #fishies < maxFishAmount then
-      table.insert(fishies, addRandomFish())
-      table.insert(fishies, addRandomFish())
+  -- Check first if the fish is a puffer or if puffers are edible
+  if fish.type ~= 'Puffer' or player.pufferEdible then
+    -- If player is bigger, remove eaten fish and gain xp
+    if player.realSize >= fish.realSize then
+      table.remove(fishies, fishIndex)
+      player:processXP(fish)
+      
+      -- Every time we eat a fish, we add two more in its place
+      -- This keeps player from being able to focus too much on smaller fish
+      -- We put a max amount just to make sure we don't completely break the game
+      if #fishies < maxFishAmount then
+        table.insert(fishies, addRandomFish())
+        table.insert(fishies, addRandomFish())
+      end
+    -- If other fish is bigger, reset the game
+    else
+      love.load()
     end
-  -- If other fish is bigger, reset the game
   else
     love.load()
   end
@@ -228,7 +239,11 @@ end
 function love.mousereleased(mouseX, mouseY, button)
   if upgrading then
     if button == 1 then
-      player.upgrades:selectUpgrade(mouseX, mouseY, player)
+      if player.upgrades.specializing then
+        player.upgrades:selectUpgrade(mouseX, mouseY, player, player.upgrades.spButtons)
+      else
+        player.upgrades:selectUpgrade(mouseX, mouseY, player, player.upgrades.buttons)
+      end
     end
   end
 end    
