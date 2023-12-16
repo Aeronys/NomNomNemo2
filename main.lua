@@ -193,7 +193,7 @@ end
 
 function resolveCollision(player, fish, fishIndex)
   -- If player is bigger, remove eaten fish and grow a little larger
-  if player.realSize >= fish.realSize then
+  if player.realSize >= fish.realSize and fish.edible then
     table.remove(fishies, fishIndex)
     player:processXP(fish)
     

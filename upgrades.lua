@@ -13,12 +13,32 @@ function Upgrades:new()
   self.buttonHeight = 64
   self.buttonYPos = self.yPos + 150
   
+  -- Lists text and corresponding functions for upgrade buttons
   upgrading = false
-  upgradeTypes = {'Size Up', 'Speed Up', 'Stealth Up'}
-  --upgradeFunctions = {self:grow()
+  upgradeList = {
+    {['uText'] = 'Size Up', ['uFunction'] = self.grow},
+    {['uText'] = 'Speed Up', ['uFunction'] = self.speedUp},
+    {['uText'] = 'Stealth Up', ['uFunction'] = self.stealthUp}
+  }
+  
+
+  -- Lists text and corresponding functions for specialization buttons
+  self.specializing = false
+  self.numOfSpecials = 2
+  specialList = {
+    {['uText'] = 'See Stealth Fish', ['uFunction'] = self.seeStealth},
+    {['uText'] = 'Eat Puffer Fish', ['uFunction'] = self.eatPuffer},
+  }
+  
+  --upgradeFunctions = self.grow
   self.buttons = {}
   for i = 1, self.numOfButtons do
-    table.insert(self.buttons, {['xPos'] = self.xPos + ((self.width / (self.numOfButtons + 1)) * i) - (self.buttonWidth / 2), ['Type'] = upgradeTypes[i]})
+    table.insert(self.buttons, {['xPos'] = self.xPos + ((self.width / (self.numOfButtons + 1)) * i) - (self.buttonWidth / 2), ['Type'] = upgradeList[i]['uText']})
+  end
+  
+  self.spButtons = {}
+  for i = 1, self.numOfSpecials do
+    table.insert(self.spButtons, {['xPos'] = self.xPos + ((self.width / (self.numOfSpecials + 1)) * i) - (self.buttonWidth / 2), ['Type'] = specialList[i]['uText']})
   end
 end
 
@@ -59,23 +79,20 @@ end
 function Upgrades:chooseUpgrade(fish)
   pause = true
   upgrading = true
+  specializing = true
 end
 
 function Upgrades:selectUpgrade(mouseX, mouseY, fish)
   for i, v in ipairs(self.buttons) do
     if mouseX >= v['xPos'] and 
-    mouseX <= v['xPos'] + self.buttonWidth and 
-    mouseY >= self.buttonYPos and 
-    mouseY <= self.buttonYPos + self.buttonHeight then
+      mouseX <= v['xPos'] + self.buttonWidth and 
+      mouseY >= self.buttonYPos and 
+      mouseY <= self.buttonYPos + self.buttonHeight then
       
-      if i == 1 then
-        self:grow(fish)
-      elseif i == 2 then
-        self:speedUp(fish)
-      else
-        self:stealthUp(fish)
-      end
+      -- Selects upgrade from ordered upgrade list
+      upgradeList[i]['uFunction'](self, fish)
       
+      -- Ends upgrading phase and resumes gameplay
       upgrading = false
       pause = false
       break

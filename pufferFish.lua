@@ -2,6 +2,7 @@ PufferFish = Fish:extend()
 
 function PufferFish:new(x, y, sizeMod)
   PufferFish.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_101.png')
+  self.edible = false
   
   self.startPosition = self.y
   
@@ -14,7 +15,7 @@ function PufferFish:new(x, y, sizeMod)
   self.detectDistance = 0
   self.escapeDistance = 0
   
-  self.xp = 0
+  self.xp = 10
   
   self.states = {
     ['neutral'] = {['moveSpeed'] = 50, ['color'] = {1, 1, 1, 1}},
