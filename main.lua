@@ -63,7 +63,7 @@ function love.load()
   seaBed = randomizeSeaBed()
   
   -- Initialize player
-  playerStartSize = 5
+  playerStartSize = 1
   player = Player(playAreaWidth / 2, 200, playerStartSize)
   
   -- Create enemy fish table and set fish amounts
@@ -213,6 +213,17 @@ function randomizeSeaBed()
   return seaBed
 end
 
+function reset()
+  stealthColors = {
+    ['neutral'] = {1, 1, 1, .1},
+    ['retreat'] = {1, 1, 1, .05},
+    ['attack'] = {1, 1, 1, 1},
+    ['alert'] = {1, 1, 1, 1}
+  }
+  
+  love.load()
+end
+
 function resolveCollision(player, fish, fishIndex)
   -- Check first if the fish is a puffer or if puffers are edible
   if fish.type ~= 'Puffer' or player.pufferEdible then
@@ -230,10 +241,10 @@ function resolveCollision(player, fish, fishIndex)
       end
     -- If other fish is bigger, reset the game
     else
-      love.load()
+      reset()
     end
   else
-    love.load()
+    reset()
   end
 end
     
