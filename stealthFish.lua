@@ -14,8 +14,8 @@ function StealthFish:new(x, y, sizeMod)
   
   self.minMoveTime = 100
   self.maxMoveTime = 700
-  self.detectDistance = 120
-  self.escapeDistance = 210
+  self.detectDistance = 140
+  self.escapeDistance = 190
   
   -- Stealth fish are usually hard to see, but reveal themselves when you get close  
   self.states = {

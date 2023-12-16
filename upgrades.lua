@@ -14,7 +14,7 @@ function Upgrades:new()
   self.buttonYPos = self.yPos + 150
   
   -- Lists text and corresponding functions for upgrade buttons
-  upgrading = false
+  self.upgrading = false
   upgradeList = {
     {['uText'] = 'Size Up', ['uFunction'] = self.grow},
     {['uText'] = 'Speed Up', ['uFunction'] = self.speedUp},
@@ -43,7 +43,7 @@ function Upgrades:new()
 end
 
 function Upgrades:draw()
-  if upgrading then
+  if self.upgrading then
     love.graphics.setColor(.5, .5, .5)
     love.graphics.rectangle('fill', self.xPos, self.yPos, self.width, self.height)
     love.graphics.setColor(1, 1, 1)
@@ -95,7 +95,7 @@ end
 
 function Upgrades:chooseUpgrade(fish)
   pause = true
-  upgrading = true
+  self.upgrading = true
   
   if fish.level == 5 then
     self.specializing = true
@@ -119,7 +119,7 @@ function Upgrades:selectUpgrade(mouseX, mouseY, fish, buttons)
       end
       
       -- Ends upgrading phase and resumes gameplay
-      upgrading = false
+      self.upgrading = false
       pause = false
       break
     end

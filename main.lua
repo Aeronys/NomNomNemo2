@@ -10,8 +10,11 @@ function love.load()
   require "stealthFish"
   require "player"
   
-  --Set backround to a sea color
-  love.graphics.setBackgroundColor(.1, .5, 1)
+  --Set gradient for our sea color
+  sea = gradientMesh("vertical", 
+        {.1, .5, 1},
+        {0, .1, .17}
+  )
   
   Font24 = love.graphics.newFont(24)
   Font15 = love.graphics.newFont(15)
@@ -60,7 +63,7 @@ function love.load()
   seaBed = randomizeSeaBed()
   
   -- Initialize player
-  playerStartSize = 1
+  playerStartSize = 5
   player = Player(playAreaWidth / 2, 200, playerStartSize)
   
   -- Create enemy fish table and set fish amounts
@@ -97,19 +100,18 @@ function love.draw()
   if not pauseDraw then
     --Draw 3 copies of everything so that we can continuously wrap around the screen without any gaps
     for i = -1, 1 do
-      love.graphics.origin()
-      love.graphics.translate(i * playAreaWidth, 0)
+      adjustCamera(i)
       
-      -- Have the camera follow the fish, but don't have it go below our seabed
-      if player.y <= screenHeight / 2 + (playAreaHeight - screenHeight)  then
-        love.graphics.translate(-player.x + screenWidth / 2, -player.y + screenHeight / 2)
-      else
-        -- Fixed y-axis translation after a certain point so that we don't scroll below our seabed
-        love.graphics.translate(-player.x + screenWidth / 2, -(playAreaHeight - screenHeight))
-      end
+      --Draw the sea
+      love.graphics.draw(sea, 0, 0, 0, playAreaWidth, playAreaHeight)
       
       -- Draw the sky
       drawSky()
+    end
+    
+    -- We use separate for loops to make sure our background is drawn before player and fish, so that we don't get parts of the fish cut off at the edge of the screen overlaps
+    for i = -1, 1 do
+      adjustCamera(i)
       
       -- Draw the player
       player:draw()
@@ -128,6 +130,20 @@ function love.draw()
       -- Draw upgrades table
       player.upgrades:draw()
     end
+  end
+end
+
+-- Adjust camera to allow for scrolling
+function adjustCamera(i)
+  love.graphics.origin()
+  love.graphics.translate(i * playAreaWidth, 0)
+  
+  -- Have the camera follow the fish, but don't have it go below our seabed
+  if player.y <= screenHeight / 2 + (playAreaHeight - screenHeight)  then
+    love.graphics.translate(-player.x + screenWidth / 2, -player.y + screenHeight / 2)
+  else
+    -- Fixed y-axis translation after a certain point so that we don't scroll below our seabed
+    love.graphics.translate(-player.x + screenWidth / 2, -(playAreaHeight - screenHeight))
   end
 end
 
@@ -230,14 +246,14 @@ function love.keyreleased(key)
   
   -- p will be our pause button
   -- Check if we're upgrading so player can't unpause during upgrade screen
-  if key == 'p' and not upgrading then
+  if key == 'p' and not player.upgrades.upgrading then
     pause = not pause
   end
 end
 
 -- Select upgrades with left mouse button
 function love.mousereleased(mouseX, mouseY, button)
-  if upgrading then
+  if player.upgrades.upgrading then
     if button == 1 then
       if player.upgrades.specializing then
         player.upgrades:selectUpgrade(mouseX, mouseY, player, player.upgrades.spButtons)
@@ -246,4 +262,47 @@ function love.mousereleased(mouseX, mouseY, button)
       end
     end
   end
-end    
+end
+
+
+-- gradientMesh code taken from https://love2d.org/wiki/Gradients
+local COLOR_MUL = love._version >= "11.0" and 1 or 255
+
+function gradientMesh(dir, ...)
+    -- Check for direction
+    local isHorizontal = true
+    if dir == "vertical" then
+        isHorizontal = false
+    elseif dir ~= "horizontal" then
+        error("bad argument #1 to 'gradient' (invalid value)", 2)
+    end
+
+    -- Check for colors
+    local colorLen = select("#", ...)
+    if colorLen < 2 then
+        error("color list is less than two", 2)
+    end
+
+    -- Generate mesh
+    local meshData = {}
+    if isHorizontal then
+        for i = 1, colorLen do
+            local color = select(i, ...)
+            local x = (i - 1) / (colorLen - 1)
+
+            meshData[#meshData + 1] = {x, 1, x, 1, color[1], color[2], color[3], color[4] or (1 * COLOR_MUL)}
+            meshData[#meshData + 1] = {x, 0, x, 0, color[1], color[2], color[3], color[4] or (1 * COLOR_MUL)}
+        end
+    else
+        for i = 1, colorLen do
+            local color = select(i, ...)
+            local y = (i - 1) / (colorLen - 1)
+
+            meshData[#meshData + 1] = {1, y, 1, y, color[1], color[2], color[3], color[4] or (1 * COLOR_MUL)}
+            meshData[#meshData + 1] = {0, y, 0, y, color[1], color[2], color[3], color[4] or (1 * COLOR_MUL)}
+        end
+    end
+
+    -- Resulting Mesh has 1x1 image size
+    return love.graphics.newMesh(meshData, "strip", "static")
+end
