@@ -24,10 +24,6 @@ function love.load()
   playAreaWidth = 5000
   playAreaHeight = 7000
   
-  -- Initialize game timer and pause status
-  gameTimer = 0
-  pause = false
-  
   -- We set here our boundaries for where each type of fish can be spawned
   -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
   fishTypes = {
@@ -48,6 +44,7 @@ function love.load()
     ['color'] = {.8, 1, 1}
     }
   
+  -- Initialize seabed images
   seaBedImages = {}
   seaBedImageCount = 16
   
@@ -60,21 +57,13 @@ function love.load()
   seaBedHeight = seaBedImages[1]:getHeight()
   seaBedWidth = seaBedImages[1]:getWidth()
   
-  seaBed = randomizeSeaBed()
-  
-  -- Initialize player
+  -- Set default starting values for player and enemy fish
   playerStartSize = 1
-  player = Player(playAreaWidth / 2, 200, playerStartSize)
-  
-  -- Create enemy fish table and set fish amounts
-  fishies = {}
   startingFishAmount = 500
   maxFishAmount = 10000
   
-  -- Populate game area with random fish
-  for i = 1, startingFishAmount do
-    table.insert(fishies, addRandomFish())
-  end
+  -- Does all the load actions that would need to be repeated upon the game reseting
+  reset()
 end
 
 function love.update(dt)
@@ -213,15 +202,28 @@ function randomizeSeaBed()
   return seaBed
 end
 
+-- Resets the game to starting values and creates new fish and seabed tables
 function reset()
-  stealthColors = {
-    ['neutral'] = {1, 1, 1, .1},
-    ['retreat'] = {1, 1, 1, .05},
-    ['attack'] = {1, 1, 1, 1},
-    ['alert'] = {1, 1, 1, 1}
-  }
+   -- Randomly pick seabed images to make up our seabed
+  seaBed = randomizeSeaBed()
   
-  love.load()
+  -- Initialize game timer and pause status
+  gameTimer = 0
+  pause = false
+  
+  -- Initialize player
+  player = Player(playAreaWidth / 2, 200, playerStartSize)
+  
+  -- Create enemy fish table and set fish amounts
+  fishies = {}
+  
+  -- Populate game area with random fish
+  for i = 1, startingFishAmount do
+    table.insert(fishies, addRandomFish())
+  end
+  
+  -- Makes stealth fish difficult to see again
+  StealthFish:stealthOn()
 end
 
 function resolveCollision(player, fish, fishIndex)

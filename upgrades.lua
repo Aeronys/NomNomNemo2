@@ -81,8 +81,7 @@ function Upgrades:grow(fish)
 end
 
 function Upgrades:seeStealth(fish)
-  stealthColors['neutral'] = {1, 1, 1, .5}
-  stealthColors['retreat'] = {1, 1, 1, .3}
+  StealthFish:stealthOff()
 end
 
 function Upgrades:speedUp(fish)
