@@ -59,9 +59,11 @@ function Fish:detectPlayer(player)
     player:getSides()
     
     if self.right < player.left then
-      self.xDistance = player.left - self.right
+      -- Does two calculations to check if the fish and player are wrapping around the edge of the play area
+      self.xDistance = math.min(player.left - self.right, self.left + playAreaWidth - player.right)
     elseif self.left > player.right then
-      self.xDistance = self.left - player.right
+      -- Does two calculations to check if the fish and player are wrapping around the edge of the play area
+      self.xDistance = math.min(self.left - player.right, player.left + playAreaWidth - self.right)
     else
       self.xDistance = 0
     end
@@ -80,6 +82,7 @@ function Fish:detectPlayer(player)
       elseif player.realSize < self.realSize and self.state ~= 'alert' and self.state ~= 'attack' then
         self:setAlert()
       end
+    -- If the player reaches a certain distance from the enemy fish, the enemy fish will stop chasing and go back to a neutral state
     elseif distance >= self.escapeDistance then
       self:setNeutral()
     end
@@ -108,21 +111,37 @@ function Fish:animateFish(dt)
       self:moveFish(self.directions[self.moveDirection], dt)
     end
   
-  -- If the fish is in a retreat state, it will try to move away from the 
+  -- If the fish is in a retreat state, it will try to move away from the player
   -- TODO: Need to fix it so they still run away when they reach the "edge" of the playing area
   elseif self.state == 'retreat' then
-    if player.left >= self.right then
-      self:moveFish('left', dt)
+    if player.x >= self.x then
+      if player.x - self.x < self.x + playAreaWidth - player.x then
+        self:moveFish('left', dt)
+      else
+        self:moveFish('right', dt)
+      end
     else
-      self:moveFish('right', dt)
+      if self.x - player.x < player.x + playAreaWidth - self.x then
+        self:moveFish('right', dt)
+      else
+        self:moveFish('left', dt)
+      end
     end
     
   -- If the fish is in an attack state, it will try to pursue the player
   elseif self.state == 'attack' then
     if player.x >= self.x then
-      self:moveFish('right', dt)
+      if player.x - self.x < self.x + playAreaWidth - player.x then
+        self:moveFish('right', dt)
+      else
+        self:moveFish('left', dt)
+      end
     elseif self.xDistance > 0 then
-      self:moveFish('left', dt)
+      if self.x - player.x < player.x + playAreaWidth - self.x then
+        self:moveFish('left', dt)
+      else
+        self:moveFish('right', dt)
+      end
     end
     
     if player.y >= self.y then
@@ -135,9 +154,17 @@ function Fish:animateFish(dt)
      self.alert.timer = self.alert.timer + dt
     -- Have fish face the player when alerted to their presence
     if player.x >= self.x then
-      self.faceDirection = 1
+      if player.x - self.x < self.x + playAreaWidth - player.x then
+        self.faceDirection = 1
+      else
+        self.faceDirection = -1
+      end
     else
-      self.faceDirection = -1
+      if self.x - player.x < player.x + playAreaWidth - self.x then
+        self.faceDirection = -1
+      else
+        self.faceDirection = 1
+      end
     end
     
     if self.alert.timer >= self.alert.duration then

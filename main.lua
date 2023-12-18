@@ -162,6 +162,9 @@ function drawPlayerTable()
   
   -- Reset origin so table will always be in same spot on screen
   love.graphics.origin()
+  --love.graphics.setColor(0, 0, 0)
+  --love.graphics.print('player x: '..player.x..' fish x '..fishies[1].x, 0, 0)
+  love.graphics.setColor(1, 1, 1)
   love.graphics.print('Level: '..player.level, 10, screenHeight - 40)
   love.graphics.print('XP: '..math.floor(player.xp)..'/'..player.levelUps[player.level], 10, screenHeight - 20)
 end

@@ -8,10 +8,9 @@ function Player:new(x, y, sizeMod)
   self.level = 1
   self.xp = 0
   self.max = 'MAX LEVEL'
-  self.levelUps = {1, 2, 3, 4, 5, 6, 7, self.max}--3, 8, 25, 50, 100, 180, 320, 500, 1500, 3000, 8000, 15000, 25000, 35000, 60000, 100000, self.max}
+  self.levelUps = {3, 8, 25, 50, 100, 180, 320, 500, 1500, 3000, 8000, 15000, 25000, 35000, 60000, 100000, self.max}
   self.stealth = 0
   self.pufferEdible = false
-  self.stealthDetection = 1
   self.upgrades = Upgrades()
 end
 
