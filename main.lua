@@ -20,7 +20,6 @@ function love.load()
   
   gulp = love.audio.newSource('audio/soundEffects/nemoGulp1.wav', 'static')
   waves = love.audio.newSource('audio/soundEffects/waves.wav', 'stream')
-  upgradeSE = love.audio.newSource('audio/soundEffects/upgrade.wav', 'stream')
   
   bgm = love.audio.newSource('audio/music/aquarium-fish-132518.mp3', 'stream')
   bgmVolume = 0.1
@@ -316,7 +315,6 @@ function love.mousereleased(mouseX, mouseY, button)
       else
         player.upgrades:selectUpgrade(mouseX, mouseY, player, player.upgrades.buttons)
       end
-      upgradeSE:play()
     end
   end
 end

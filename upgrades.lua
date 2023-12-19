@@ -13,32 +13,39 @@ function Upgrades:new()
   self.buttonHeight = 64
   self.buttonYPos = self.yPos + 150
   
+  -- Upgrade Sound Effects
+  sizeUpSE = love.audio.newSource('audio/soundEffects/sizeUp.wav', 'stream')
+  speedUpSE = love.audio.newSource('audio/soundEffects/speedUp.wav', 'stream')
+  stealthUpSE = love.audio.newSource('audio/soundEffects/stealthUp.wav', 'stream')
+  
+  -- Speed sound effect is so loud, save our ears
+  speedUpSE:setVolume(.2)
+  
   -- Lists text and corresponding functions for upgrade buttons
   self.upgrading = false
-  upgradeList = {
-    {['uText'] = 'Size Up', ['uFunction'] = self.grow},
-    {['uText'] = 'Speed Up', ['uFunction'] = self.speedUp},
-    {['uText'] = 'Stealth Up', ['uFunction'] = self.stealthUp}
+  self.upgradeList = {
+    {['uText'] = 'Size Up', ['uFunction'] = self.grow, ['sound'] = sizeUpSE},
+    {['uText'] = 'Speed Up', ['uFunction'] = self.speedUp, ['sound'] = speedUpSE},
+    {['uText'] = 'Stealth Up', ['uFunction'] = self.stealthUp, ['sound'] = stealthUpSE}
   }
   
 
   -- Lists text and corresponding functions for specialization buttons
   self.specializing = false
   self.numOfSpecials = 2
-  specialList = {
+  self.specialList = {
     {['uText'] = 'See Stealth Fish', ['uFunction'] = self.seeStealth},
     {['uText'] = 'Eat Puffer Fish', ['uFunction'] = self.eatPuffer},
   }
   
-  --upgradeFunctions = self.grow
   self.buttons = {}
-  for i = 1, self.numOfButtons do
-    table.insert(self.buttons, {['xPos'] = self.xPos + ((self.width / (self.numOfButtons + 1)) * i) - (self.buttonWidth / 2), ['Type'] = upgradeList[i]['uText']})
+  for i = 1, #self.upgradeList do
+    table.insert(self.buttons, {['xPos'] = self.xPos + ((self.width / (self.numOfButtons + 1)) * i) - (self.buttonWidth / 2), ['Type'] = self.upgradeList[i]['uText']})
   end
   
   self.spButtons = {}
-  for i = 1, self.numOfSpecials do
-    table.insert(self.spButtons, {['xPos'] = self.xPos + ((self.width / (self.numOfSpecials + 1)) * i) - (self.buttonWidth / 2), ['Type'] = specialList[i]['uText']})
+  for i = 1, #self.specialList do
+    table.insert(self.spButtons, {['xPos'] = self.xPos + ((self.width / (self.numOfSpecials + 1)) * i) - (self.buttonWidth / 2), ['Type'] = self.specialList[i]['uText']})
   end
 end
 
@@ -96,7 +103,7 @@ function Upgrades:chooseUpgrade(fish)
   pause = true
   self.upgrading = true
   
-  if fish.level == 5 then
+  if fish.level == 5 or fish.level == 10 then
     self.specializing = true
   end
 end
@@ -110,11 +117,14 @@ function Upgrades:selectUpgrade(mouseX, mouseY, fish, buttons)
       
       if self.specializing then
         --Selects specialization from special list
-        specialList[i]['uFunction'](self, fish)
+        self.specialList[i]['uFunction'](self, fish)
+        table.remove(self.spButtons, i)
+        print(#self.specialList)
         self.specializing = false
       else
         -- Selects upgrade from ordered upgrade list
-        upgradeList[i]['uFunction'](self, fish)
+        self.upgradeList[i]['uFunction'](self, fish)
+        self.upgradeList[i]['sound']:play()
       end
       
       -- Ends upgrading phase and resumes gameplay
