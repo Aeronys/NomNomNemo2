@@ -10,12 +10,35 @@ function love.load()
   require "stealthFish"
   require "player"
   
-  --Set gradient for our sea color
+  -- Set up audio files
+  chomps = {}
+  chompCount = 5
+  for i = 1, chompCount do
+    local sfx = love.audio.newSource('audio/soundEffects/nemoChomp'..i..'.wav', 'static')
+    table.insert(chomps, sfx)
+  end
+  
+  gulp = love.audio.newSource('audio/soundEffects/nemoGulp1.wav', 'static')
+  waves = love.audio.newSource('audio/soundEffects/waves.wav', 'stream')
+  upgradeSE = love.audio.newSource('audio/soundEffects/upgrade.wav', 'stream')
+  
+  bgm = love.audio.newSource('audio/music/aquarium-fish-132518.mp3', 'stream')
+  bgmVolume = 0.1
+  bgmOn = true
+  bgm:setVolume(bgmVolume)
+  bgm:setLooping(true)
+  
+  -- Play waves and background music
+  waves:play()
+  bgm:play()
+  
+  -- Set gradient for our sea color
   sea = gradientMesh("vertical", 
         {.1, .5, 1},
         {0, .1, .17}
   )
   
+  -- Set fonts
   Font24 = love.graphics.newFont(24)
   Font15 = love.graphics.newFont(15)
   defaultFont = love.graphics.newFont(12)
@@ -234,6 +257,8 @@ function resolveCollision(player, fish, fishIndex)
   if fish.type ~= 'Puffer' or player.pufferEdible then
     -- If player is bigger, remove eaten fish and gain xp
     if player.realSize >= fish.realSize then
+      local chomp = love.math.random(chompCount)
+      chomps[chomp]:play()
       table.remove(fishies, fishIndex)
       player:processXP(fish)
       
@@ -246,13 +271,24 @@ function resolveCollision(player, fish, fishIndex)
       end
     -- If other fish is bigger, reset the game
     else
+      gulp:play()
       reset()
     end
   else
+    gulp:play()
     reset()
   end
 end
     
+function toggleBGM()
+  if bgmOn then
+    bgm:setVolume(0)
+    bgmOn = false
+  else
+    bgm:setVolume(bgmVolume)
+    bgmOn = true
+  end
+end
 
 -- Set player rotation back to zero whenever the w, s, down, or up keys are released
 function love.keyreleased(key)
@@ -262,8 +298,12 @@ function love.keyreleased(key)
   
   -- p will be our pause button
   -- Check if we're upgrading so player can't unpause during upgrade screen
-  if key == 'p' and not player.upgrades.upgrading then
+  if (key == 'p' or key == 'space') and not player.upgrades.upgrading then
     pause = not pause
+  end
+  
+  if key == 'm' then
+    toggleBGM()
   end
 end
 
@@ -276,6 +316,7 @@ function love.mousereleased(mouseX, mouseY, button)
       else
         player.upgrades:selectUpgrade(mouseX, mouseY, player, player.upgrades.buttons)
       end
+      upgradeSE:play()
     end
   end
 end

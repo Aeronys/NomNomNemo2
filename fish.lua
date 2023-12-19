@@ -114,38 +114,18 @@ function Fish:animateFish(dt)
   -- If the fish is in a retreat state, it will try to move away from the player
   -- TODO: Need to fix it so they still run away when they reach the "edge" of the playing area
   elseif self.state == 'retreat' then
-    if player.x >= self.x then
-      if player.x - self.x < self.x + playAreaWidth - player.x then
-        self:moveFish('left', dt)
-      else
-        self:moveFish('right', dt)
-      end
-    else
-      if self.x - player.x < player.x + playAreaWidth - self.x then
-        self:moveFish('right', dt)
-      else
-        self:moveFish('left', dt)
-      end
-    end
+    self:moveFish(self:findXDirection(self.x, player.x), dt)
     
   -- If the fish is in an attack state, it will try to pursue the player
   elseif self.state == 'attack' then
-    if player.x >= self.x then
-      if player.x - self.x < self.x + playAreaWidth - player.x then
-        self:moveFish('right', dt)
-      else
-        self:moveFish('left', dt)
-      end
-    elseif self.xDistance > 0 then
-      if self.x - player.x < player.x + playAreaWidth - self.x then
-        self:moveFish('left', dt)
-      else
-        self:moveFish('right', dt)
-      end
+    -- Distance needs to be more than 1 to keep fish from constantly spinning in place when it lines up with player
+    if self.xDistance > 0 then
+      self:moveFish(self:findXDirection(player.x, self.x), dt)
     end
     
     if player.y >= self.y then
       self:moveFish('down', dt)
+    -- Distance needs to be more than 1, to keep fish from constantly spinning in place when it lines up with player
     elseif self.yDistance > 0 then
       self:moveFish('up', dt)
     end
@@ -153,26 +133,39 @@ function Fish:animateFish(dt)
   elseif self.state == 'alert' then
      self.alert.timer = self.alert.timer + dt
     -- Have fish face the player when alerted to their presence
-    if player.x >= self.x then
-      if player.x - self.x < self.x + playAreaWidth - player.x then
-        self.faceDirection = 1
-      else
-        self.faceDirection = -1
-      end
+    if self:findXDirection(player.x, self.x) == 'right' then
+      self.faceDirection = 1
     else
-      if self.x - player.x < player.x + playAreaWidth - self.x then
-        self.faceDirection = -1
-      else
-        self.faceDirection = 1
-      end
+      self.faceDirection = -1
     end
     
+    -- When alert timer is up, switch from alert to attack state
     if self.alert.timer >= self.alert.duration then
       self:setAttack()
     end
   end
 end
 
+-- Finds direction of fish1x in relation to fish2x
+-- i.e. if fish1x is to the left of fish 2x then this function will return 'left'
+function Fish:findXDirection(fish1x, fish2x)
+  -- First check which fish has the greater x position
+  if fish1x >= fish2x then
+    -- Check whether or not both fish are on the same "screen" by measuring whether the distance between them is shorter if you try to wrap around the screen
+    if fish1x - fish2x < fish2x + playAreaWidth - fish1x then
+      return 'right'
+    else
+      return 'left'
+    end
+  else
+    if fish2x - fish1x < fish1x + playAreaWidth - fish2x then
+      return 'left'
+    else
+      return 'right'
+    end
+  end
+end
+  
 -- Puts fish into alert state and sets necessary parameters
 function Fish:setAlert()
   self.state = 'alert'
