@@ -82,7 +82,7 @@ function Upgrades:eatPuffer(fish)
 end
 
 function Upgrades:grow(fish)
-  fish.sizeModifier = fish.sizeModifier + .25
+  fish.sizeModifier = fish.sizeModifier + .125
   
   -- New size means real and sized dimensions need to be updated
   fish:updateDimensions()
@@ -116,7 +116,6 @@ function Upgrades:selectUpgrade(mouseX, mouseY, fish, buttons)
       mouseY >= self.buttonYPos and 
       mouseY <= self.buttonYPos + self.buttonHeight then
       
-      print(i)
       if self.specializing then
         --Selects specialization from special list
         self.specialList[i]['uFunction'](self, fish)
@@ -133,6 +132,9 @@ function Upgrades:selectUpgrade(mouseX, mouseY, fish, buttons)
       -- Ends upgrading phase and resumes gameplay
       self.upgrading = false
       pause = false
+      
+      -- Call levelUp() again in case we've leveled up multiple times at once
+      fish:levelUp()
       break
     end
   end

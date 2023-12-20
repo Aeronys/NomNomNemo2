@@ -1,7 +1,7 @@
 PufferFish = Fish:extend()
 
 function PufferFish:new(x, y, sizeMod)
-  PufferFish.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_101.png')
+  PufferFish.super.new(self, x, y, sizeMod, 'images/PNG/Retina/fishTile_101.png')
   
   self.type = 'Puffer'
   self.startPosition = self.y
@@ -18,10 +18,10 @@ function PufferFish:new(x, y, sizeMod)
   self.xp = 10
   
   self.states = {
-    ['neutral'] = {['moveSpeed'] = 50, ['color'] = {1, 1, 1, 1}},
-    ['retreat'] = {['moveSpeed'] = 50, ['color'] = {1, 1, 1, 1}},
-    ['attack'] = {['moveSpeed'] = 50, ['color'] = {1, 0, 0, 1}},
-    ['alert'] = {['moveSpeed'] = 50, ['color'] = {1, 1, 1, 1}}
+    ['neutral'] = {['moveSpeed'] = 50},
+    ['retreat'] = {['moveSpeed'] = 50},
+    ['attack'] = {['moveSpeed'] = 50},
+    ['alert'] = {['moveSpeed'] = 50}
   }
 end
 

@@ -3,10 +3,10 @@ require "alert"
 Fish = Entity:extend()
   
 function Fish:new(x, y, sizeMod, imagePath)
-  imagePath = imagePath or 'images/PNG/Default size/fishTile_075.png'
+  imagePath = imagePath or 'images/PNG/Retina/fishTile_075.png'
   Fish.super.new(self, x, y, imagePath)
   
-  self.sizeModifier = sizeMod
+  self.sizeModifier = sizeMod / 2
   self.currentRotation = 0
   self.moveRotation = 0.2
   self:updateDimensions()
@@ -15,6 +15,7 @@ function Fish:new(x, y, sizeMod, imagePath)
   self.faceDirection = 1
   
   -- Move time is in milliseconds, which is why our divider is currently set to 100
+  self.moveFrequency = 8    --Min 4, less means more frequent movement
   self.minMoveTime = 50
   self.maxMoveTime = 300
   self.moveTimeDivider = 100
@@ -35,7 +36,7 @@ function Fish:new(x, y, sizeMod, imagePath)
   }
   
   self.xp = 1
-  self.xp = self.xp * self.sizeModifier
+  self.xp = self.xp * (self.sizeModifier * 2)
   self.alertDuration = 1
 end
 
@@ -101,7 +102,7 @@ function Fish:animateFish(dt)
     -- Whenever timer expires, choose new fish direction and move time, and reset timer
     if self.timer > self.moveTime / self.moveTimeDivider then
       self.currentRotation = 0
-      self.moveDirection = love.math.random(8)
+      self.moveDirection = love.math.random(self.moveFrequency)
       self.moveTime  = love.math.random(self.minMoveTime, self.maxMoveTime)
       self.timer = 0
     end

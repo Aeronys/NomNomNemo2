@@ -5,6 +5,7 @@ function love.load()
   require "entity"
   require "fish"
   require "bigFish"
+  require "eel"
   require "greenFish"
   require "pufferFish"
   require "stealthFish"
@@ -54,7 +55,8 @@ function love.load()
     {['Type'] = 'StealthFish', ['upperBound'] = 1000, ['lowerBound'] = 4000},
     {['Type'] = 'GreenFish', ['upperBound'] = 3000, ['lowerBound'] = 5500},
     {['Type'] = 'BigFish', ['upperBound'] = 4000, ['lowerBound'] = 7000},
-    {['Type'] = 'PufferFish', ['upperBound'] = 1500, ['lowerBound'] = 5800}
+    {['Type'] = 'PufferFish', ['upperBound'] = 1500, ['lowerBound'] = 5800},
+    {['Type'] = 'Eel', ['upperBound'] = 0, ['lowerBound'] = playAreaHeight}
     }
   
   screenWidth = love.graphics.getWidth()
@@ -161,7 +163,7 @@ end
 
 -- Generates a random fish to be added into the level
 function addRandomFish()
-  local fishType = love.math.random(#fishTypes)
+  local fishType = love.math.random(#fishTypes - 1)
   local fishSize = 1 + love.math.random()
   local fishX = love.math.random(playAreaWidth)
   local fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
@@ -177,6 +179,8 @@ function addRandomFish()
     return BigFish(fishX, fishY, fishSize)
   elseif fishType == 5 then
     return PufferFish(fishX, fishY, fishSize)
+  elseif fishType == 6 then
+    return Eel(fishX, fishY, fishSize)
   end
 end
   

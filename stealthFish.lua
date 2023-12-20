@@ -9,7 +9,7 @@ stealthColors = {
 }
   
 function StealthFish:new(x, y, sizeMod)
-  StealthFish.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_077.png')
+  StealthFish.super.new(self, x, y, sizeMod, 'images/PNG/Retina/fishTile_077.png')
   self.xp = self.xp * 10
   
   self.minMoveTime = 100

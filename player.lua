@@ -3,7 +3,7 @@ Player = Fish:extend()
 require "upgrades"
 
 function Player:new(x, y, sizeMod)
-  Player.super.new(self, x, y, sizeMod, 'images/PNG/Default size/fishTile_081.png')
+  Player.super.new(self, x, y, sizeMod, 'images/PNG/Retina/fishTile_081.png')
   self.moveSpeed = 200
   self.level = 1
   self.xp = 0
@@ -51,15 +51,14 @@ end
 
 function Player:processXP(other)
   self.xp = self.xp + other.xp
-  
-  -- While loop is used in case multiple level ups occur at once, although this should never occur
-  while self.levelUps[self.level] ~= self.max and self.xp >= self.levelUps[self.level] do
-    self:levelUp()
-  end
+  self:levelUp()
 end
 
 function Player:levelUp()
-  self.level = self.level + 1
-  self.upgrades:chooseUpgrade(self)
+  -- We check for level up here instead of processXP because it allows us to call this function again after upgrading, in case multiple levels occur at once
+  if self.levelUps[self.level] ~= self.max and self.xp >= self.levelUps[self.level] then
+    self.level = self.level + 1
+    self.upgrades:chooseUpgrade(self)
+  end
 end
   
