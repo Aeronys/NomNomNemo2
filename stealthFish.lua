@@ -14,14 +14,14 @@ function StealthFish:new(x, y, sizeMod)
   
   self.minMoveTime = 100
   self.maxMoveTime = 700
-  self.detectDistance = 140
+  self.detectDistance = 160
   self.escapeDistance = 190
   
   -- Stealth fish are usually hard to see, but reveal themselves when you get close  
   self.states = {
     ['neutral'] = {['moveSpeed'] = 100, ['color'] = {1, 1, 1, .1}},
     ['retreat'] = {['moveSpeed'] = 220, ['color'] = {1, 1, 1, .05}},
-    ['attack'] = {['moveSpeed'] = 260, ['color'] = {1, 1, 1, 1}},
+    ['attack'] = {['moveSpeed'] = 240, ['color'] = {1, 1, 1, 1}},
     ['alert'] = {['moveSpeed'] = 0, ['color'] = {1, 1, 1, 1}}
   }
 end

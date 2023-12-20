@@ -20,6 +20,7 @@ function love.load()
   
   gulp = love.audio.newSource('audio/soundEffects/nemoGulp1.wav', 'static')
   waves = love.audio.newSource('audio/soundEffects/waves.wav', 'stream')
+  waves:setLooping(true)
   
   bgm = love.audio.newSource('audio/music/aquarium-fish-132518.mp3', 'stream')
   bgmVolume = 0.1
@@ -213,6 +214,32 @@ function drawSeaBed(seaBed)
   end
 end
 
+function eatFish(player, fish, fishIndex)
+  -- If player is bigger, remove eaten fish and gain xp
+  if player.realSize >= fish.realSize then
+    local chomp = love.math.random(chompCount)
+    chomps[chomp]:play()
+    table.remove(fishies, fishIndex)
+    player:processXP(fish)
+    
+    -- Every time we eat a fish, we add two more in its place
+    -- This keeps player from being able to focus too much on smaller fish
+    -- We put a max amount just to make sure we don't completely break the game
+    if #fishies < maxFishAmount then
+      table.insert(fishies, addRandomFish())
+      table.insert(fishies, addRandomFish())
+    end
+  -- If other fish is bigger, reset the game
+  else
+    eatPlayer()
+  end
+end
+  
+function eatPlayer()
+  gulp:play()
+  reset()
+end
+
 -- Choose random sea bed tiles and insert them into a table which will represent our seabed
 function randomizeSeaBed()
   local seaBed = {}
@@ -253,29 +280,14 @@ end
 
 function resolveCollision(player, fish, fishIndex)
   -- Check first if the fish is a puffer or if puffers are edible
-  if fish.type ~= 'Puffer' or player.pufferEdible then
-    -- If player is bigger, remove eaten fish and gain xp
-    if player.realSize >= fish.realSize then
-      local chomp = love.math.random(chompCount)
-      chomps[chomp]:play()
-      table.remove(fishies, fishIndex)
-      player:processXP(fish)
-      
-      -- Every time we eat a fish, we add two more in its place
-      -- This keeps player from being able to focus too much on smaller fish
-      -- We put a max amount just to make sure we don't completely break the game
-      if #fishies < maxFishAmount then
-        table.insert(fishies, addRandomFish())
-        table.insert(fishies, addRandomFish())
-      end
-    -- If other fish is bigger, reset the game
+  if fish.type == 'Puffer' then
+    if player.pufferEdible then
+      eatFish(player, fish, fishIndex)
     else
-      gulp:play()
-      reset()
+      eatPlayer()
     end
   else
-    gulp:play()
-    reset()
+    eatFish(player, fish, fishIndex)
   end
 end
     

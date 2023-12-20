@@ -7,13 +7,13 @@ function GreenFish:new(x, y, sizeMod)
   self.xp = self.xp * 100
   self.minMoveTime = 50
   self.maxMoveTime = 300
-  self.detectDistance = 350
-  self.escapeDistance = 500
+  self.detectDistance = 300
+  self.escapeDistance = 400
   
   self.states = {
     ['neutral'] = {['moveSpeed'] = 150, ['color'] = {1, 1, 1, 1}},
-    ['retreat'] = {['moveSpeed'] = 350, ['color'] = {1, 1, 1, 1}},
-    ['attack'] = {['moveSpeed'] = 300, ['color'] = {1, 0, 0, 1}},
+    ['retreat'] = {['moveSpeed'] = 310, ['color'] = {1, 1, 1, 1}},
+    ['attack'] = {['moveSpeed'] = 290, ['color'] = {1, 0, 0, 1}},
     ['alert'] = {['moveSpeed'] = 0, ['color'] = {1, 1, 1, 1}}
   }
 end

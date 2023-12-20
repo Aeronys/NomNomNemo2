@@ -96,7 +96,7 @@ function Upgrades:speedUp(fish)
 end
 
 function Upgrades:stealthUp(fish)
-  fish.stealth = fish.stealth + 60
+  fish.stealth = fish.stealth + 70
 end
 
 function Upgrades:chooseUpgrade(fish)
@@ -119,7 +119,6 @@ function Upgrades:selectUpgrade(mouseX, mouseY, fish, buttons)
         --Selects specialization from special list
         self.specialList[i]['uFunction'](self, fish)
         table.remove(self.spButtons, i)
-        print(#self.specialList)
         self.specializing = false
       else
         -- Selects upgrade from ordered upgrade list
@@ -128,6 +127,7 @@ function Upgrades:selectUpgrade(mouseX, mouseY, fish, buttons)
       end
       
       -- Ends upgrading phase and resumes gameplay
+      print(fish.pufferEdible)
       self.upgrading = false
       pause = false
       break

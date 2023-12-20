@@ -83,7 +83,7 @@ function Fish:detectPlayer(player)
         self:setAlert()
       end
     -- If the player reaches a certain distance from the enemy fish, the enemy fish will stop chasing and go back to a neutral state
-    elseif distance >= self.escapeDistance then
+    elseif distance >= self.escapeDistance - (player.stealth / 2) then
       self:setNeutral()
     end
   end
