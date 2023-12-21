@@ -40,8 +40,9 @@ function love.load()
   )
   
   -- Set fonts
-  Font24 = love.graphics.newFont(24)
-  Font15 = love.graphics.newFont(15)
+  font24 = love.graphics.newFont(24)
+  font18 = love.graphics.newFont(18)
+  font15 = love.graphics.newFont(15)
   defaultFont = love.graphics.newFont(12)
   
   -- Level dimensions
@@ -192,8 +193,19 @@ function drawPlayerTable()
   --love.graphics.setColor(0, 0, 0)
   --love.graphics.print('player x: '..player.x..' fish x '..fishies[1].x, 0, 0)
   love.graphics.setColor(1, 1, 1)
-  love.graphics.print('Level: '..player.level, 10, screenHeight - 40)
-  love.graphics.print('XP: '..math.floor(player.xp)..'/'..player.levelUps[player.level], 10, screenHeight - 20)
+  
+  -- Convert gamer timer into minutes, seconds, and milliseconds
+  gameMinutes = math.floor(gameTimer / 60)
+  gameSeconds = gameTimer % 60
+  gameMS = (gameSeconds * 100) % 100
+  
+  -- Format game time to look nicer on screen
+  formattedTime = string.format('%02i:%02i:%02i', gameMinutes, gameSeconds, gameMS)
+  
+  -- Print game time, player level, and xp
+  love.graphics.print('Time Elapsed: '..formattedTime, tableXPos, screenHeight - 60)
+  love.graphics.print('Level: '..player.level, tableXPos, screenHeight - 40)
+  love.graphics.print('XP: '..math.floor(player.xp)..'/'..player.levelUps[player.level], tableXPos, screenHeight - 20)
 end
     
 -- Draws a rectangle at the top of the screen, representing the sky

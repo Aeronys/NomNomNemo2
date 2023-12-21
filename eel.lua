@@ -20,3 +20,7 @@ function Eel:new(x, y, sizeMod)
     ['alert'] = {['moveSpeed'] = 0}
   }
 end
+
+function Eel:animateFish()
+  
+end

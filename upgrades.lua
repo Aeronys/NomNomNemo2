@@ -11,7 +11,7 @@ function Upgrades:new()
   self.numOfButtons = 3
   self.buttonWidth = 64
   self.buttonHeight = 64
-  self.buttonYPos = self.yPos + 150
+  self.buttonYPos = self.yPos + 200
   
   -- Upgrade Sound Effects
   sizeUpSE = love.audio.newSource('audio/soundEffects/sizeUp.wav', 'static')
@@ -26,11 +26,10 @@ function Upgrades:new()
   -- Lists text and corresponding functions for upgrade buttons
   self.upgrading = false
   self.upgradeList = {
-    {['uText'] = 'Size Up', ['uFunction'] = self.grow, ['sound'] = sizeUpSE},
-    {['uText'] = 'Speed Up', ['uFunction'] = self.speedUp, ['sound'] = speedUpSE},
-    {['uText'] = 'Stealth Up', ['uFunction'] = self.stealthUp, ['sound'] = stealthUpSE}
+    {['uText'] = 'Size Up', ['uFunction'] = self.grow, ['sound'] = sizeUpSE, ['level'] = 1},
+    {['uText'] = 'Speed Up', ['uFunction'] = self.speedUp, ['sound'] = speedUpSE, ['level'] = 1},
+    {['uText'] = 'Stealth Up', ['uFunction'] = self.stealthUp, ['sound'] = stealthUpSE, ['level'] = 1}
   }
-  
 
   -- Lists text and corresponding functions for specialization buttons
   self.specializing = false
@@ -52,11 +51,11 @@ end
 
 function Upgrades:draw()
   if self.upgrading then
-    love.graphics.setColor(.5, .5, .5)
+    love.graphics.setColor(.5, .5, .5, .2)
     love.graphics.rectangle('fill', self.xPos, self.yPos, self.width, self.height)
     love.graphics.setColor(1, 1, 1)
-    love.graphics.printf('Level up!', Font24, self.xPos, self.yPos + 20, self.width, 'center')
-    love.graphics.printf('Choose your upgrade:', Font15, self.xPos, self.yPos + 70, self.width, 'center')
+    love.graphics.printf('Level up!', font24, self.xPos, self.yPos + 20, self.width, 'center')
+    love.graphics.printf('Choose your upgrade:', font18, self.xPos, self.yPos + 90, self.width, 'center')
     
     if self.specializing then
       self:drawButtons(self.spButtons)
@@ -69,12 +68,15 @@ end
 function Upgrades:drawButtons(buttons)
   -- Draw buttons from buttons list
   for i, v in ipairs(buttons) do
-      love.graphics.setColor(.3, .3, .3)
+      love.graphics.setColor(.3, .3, .3, .3)
       love.graphics.rectangle('fill', v['xPos'], self.buttonYPos, self.buttonWidth, self.buttonHeight)
-      love.graphics.setColor(1, 1, 1)
+      if not specialing then
+        love.graphics.setColor(1, 1, .4, 1)
+        love.graphics.printf('Lvl '..self.upgradeList[i]['level'], font15, v['xPos'], (self.buttonYPos - 20), self.buttonWidth, 'center')
+      end
+      love.graphics.setColor(1, 1, 1, 1)
       love.graphics.printf(v['Type'], v['xPos'], (self.buttonYPos + self.buttonHeight / 2) - 15, self.buttonWidth, 'center')
   end
-  love.graphics.setColor(1, 1, 1)
 end
 
 function Upgrades:eatPuffer(fish)
@@ -126,6 +128,7 @@ function Upgrades:selectUpgrade(mouseX, mouseY, fish, buttons)
       else
         -- Selects upgrade from ordered upgrade list
         self.upgradeList[i]['uFunction'](self, fish)
+        self.upgradeList[i]['level'] = self.upgradeList[i]['level'] + 1
         self.upgradeList[i]['sound']:play()
       end
       
