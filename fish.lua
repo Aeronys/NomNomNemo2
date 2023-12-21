@@ -77,7 +77,7 @@ function Fish:detectPlayer(player)
     end
     
     local distance = math.sqrt(self.xDistance ^ 2 + self.yDistance ^ 2)
-    if distance <= self.detectDistance - player.stealth then
+    if distance <= math.max(self.detectDistance - player.stealth, 20) then
       if player.realSize >= self.realSize then
         self.state = 'retreat'
       elseif player.realSize < self.realSize and self.state ~= 'alert' and self.state ~= 'attack' then

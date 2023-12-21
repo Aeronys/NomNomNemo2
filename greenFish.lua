@@ -13,7 +13,7 @@ function GreenFish:new(x, y, sizeMod)
   
   self.states = {
     ['neutral'] = {['moveSpeed'] = 150},
-    ['retreat'] = {['moveSpeed'] = 310},
+    ['retreat'] = {['moveSpeed'] = 320},
     ['attack'] = {['moveSpeed'] = 290},
     ['alert'] = {['moveSpeed'] = 0}
   }

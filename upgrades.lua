@@ -95,11 +95,11 @@ function Upgrades:seeStealth(fish)
 end
 
 function Upgrades:speedUp(fish)
-  fish.moveSpeed = fish.moveSpeed + 70
+  fish.moveSpeed = fish.moveSpeed + 55
 end
 
 function Upgrades:stealthUp(fish)
-  fish.stealth = fish.stealth + 70
+  fish.stealth = fish.stealth + 75
 end
 
 function Upgrades:chooseUpgrade(fish)

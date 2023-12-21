@@ -4,11 +4,11 @@ require "upgrades"
 
 function Player:new(x, y, sizeMod)
   Player.super.new(self, x, y, sizeMod, 'images/PNG/Retina/fishTile_081.png')
-  self.moveSpeed = 200
+  self.moveSpeed = 210
   self.level = 1
   self.xp = 0
   self.max = 'MAX LEVEL'
-  self.levelUps = {3, 8, 25, 50, 90, 150, 225, 350, 520, 750, 1100, 1800, 3000, 5000, 8500, 14000, 25000, 40000, 70000, 120000, self.max}
+  self.levelUps = {3, 8, 20, 35, 60, 90, 150, 225, 350, 520, 750, 1100, 1800, 3200, 5500, 9300, 14000, 25000, 40000, 70000, 120000, self.max}
   self.stealth = 0
   self.pufferEdible = false
   self.upgrades = Upgrades()

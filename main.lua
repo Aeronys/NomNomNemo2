@@ -47,17 +47,17 @@ function love.load()
   
   -- Level dimensions
   playAreaWidth = 5000
-  playAreaHeight = 7000
+  playAreaHeight = 8000
   
   -- We set here our boundaries for where each type of fish can be spawned
   -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
   fishTypes = {
-    {['Type'] = 'Fish', ['upperBound'] = 0, ['lowerBound'] = 2500},
-    {['Type'] = 'StealthFish', ['upperBound'] = 1000, ['lowerBound'] = 4000},
-    {['Type'] = 'GreenFish', ['upperBound'] = 3000, ['lowerBound'] = 5500},
-    {['Type'] = 'BigFish', ['upperBound'] = 4000, ['lowerBound'] = 7000},
-    {['Type'] = 'PufferFish', ['upperBound'] = 1500, ['lowerBound'] = 5800},
-    {['Type'] = 'Eel', ['upperBound'] = 0, ['lowerBound'] = playAreaHeight}
+    {['Type'] = 'Fish', ['upperBound'] = 0, ['lowerBound'] = 2500, ['spawnBuffer'] = 100},
+    {['Type'] = 'StealthFish', ['upperBound'] = 1000, ['lowerBound'] = 4500, ['spawnBuffer'] = 300},
+    {['Type'] = 'GreenFish', ['upperBound'] = 3000, ['lowerBound'] = 6000, ['spawnBuffer'] = 500},
+    {['Type'] = 'BigFish', ['upperBound'] = 4500, ['lowerBound'] = 8000, ['spawnBuffer'] = 800},
+    {['Type'] = 'PufferFish', ['upperBound'] = 1500, ['lowerBound'] = 5800, ['spawnBuffer'] = 1000},
+    {['Type'] = 'Eel', ['upperBound'] = 0, ['lowerBound'] = playAreaHeight, ['spawnBuffer'] = 2000}
     }
   
   screenWidth = love.graphics.getWidth()
@@ -169,6 +169,11 @@ function addRandomFish()
   local fishX = love.math.random(playAreaWidth)
   local fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
   
+  -- Makes sure that new fish aren't spawned too close to the player
+  while math.abs(player.x - fishX) <= fishTypes[fishType]['spawnBuffer'] and math.abs(player.y - fishY) <= fishTypes[fishType]['spawnBuffer'] do
+    fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
+  end
+    
   -- We call different classes based on which fish we randomized
   if fishType == 1 then
     return Fish(fishX, fishY, fishSize)

@@ -21,7 +21,7 @@ function StealthFish:new(x, y, sizeMod)
   self.states = {
     ['neutral'] = {['moveSpeed'] = 100, ['color'] = {1, 1, 1, .1}},
     ['retreat'] = {['moveSpeed'] = 220, ['color'] = {1, 1, 1, .05}},
-    ['attack'] = {['moveSpeed'] = 240, ['color'] = {1, 1, 1, 1}},
+    ['attack'] = {['moveSpeed'] = 235, ['color'] = {1, 1, 1, 1}},
     ['alert'] = {['moveSpeed'] = 0, ['color'] = {1, 1, 1, 1}}
   }
 end
