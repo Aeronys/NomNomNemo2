@@ -46,17 +46,17 @@ function love.load()
   defaultFont = love.graphics.newFont(12)
   
   -- Level dimensions
-  playAreaWidth = 5000
+  playAreaWidth = 5500
   playAreaHeight = 8000
   
   -- We set here our boundaries for where each type of fish can be spawned
   -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
   fishTypes = {
     {['Type'] = 'Fish', ['upperBound'] = 0, ['lowerBound'] = 2500, ['spawnBuffer'] = 100},
-    {['Type'] = 'StealthFish', ['upperBound'] = 1000, ['lowerBound'] = 4500, ['spawnBuffer'] = 300},
+    {['Type'] = 'StealthFish', ['upperBound'] = 1200, ['lowerBound'] = 4500, ['spawnBuffer'] = 300},
     {['Type'] = 'GreenFish', ['upperBound'] = 3000, ['lowerBound'] = 6000, ['spawnBuffer'] = 500},
     {['Type'] = 'BigFish', ['upperBound'] = 4500, ['lowerBound'] = 8000, ['spawnBuffer'] = 800},
-    {['Type'] = 'PufferFish', ['upperBound'] = 1500, ['lowerBound'] = 5800, ['spawnBuffer'] = 1000},
+    {['Type'] = 'PufferFish', ['upperBound'] = 1500, ['lowerBound'] = 7000, ['spawnBuffer'] = 1000},
     {['Type'] = 'Eel', ['upperBound'] = 0, ['lowerBound'] = playAreaHeight, ['spawnBuffer'] = 2000}
     }
   
@@ -170,6 +170,8 @@ function addRandomFish()
   local fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
   
   -- Makes sure that new fish aren't spawned too close to the player
+  --local xdistance = math.min(player.x - fishX, fishX + playAreaWidth - player.x, playerX + playAreaWidth - fishX)
+  
   while math.abs(player.x - fishX) <= fishTypes[fishType]['spawnBuffer'] and math.abs(player.y - fishY) <= fishTypes[fishType]['spawnBuffer'] do
     fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
   end
@@ -211,6 +213,11 @@ function drawPlayerTable()
   love.graphics.print('Time Elapsed: '..formattedTime, tableXPos, screenHeight - 60)
   love.graphics.print('Level: '..player.level, tableXPos, screenHeight - 40)
   love.graphics.print('XP: '..math.floor(player.xp)..'/'..player.levelUps[player.level], tableXPos, screenHeight - 20)
+  
+  --[[ Debugging table
+  --love.graphics.print('Player_x: '..player.x, 10, 10)
+  love.graphics.print('Fish_x: '..fishies[1].x, 10, 30)
+  love.graphics.print('Distance: '..fishies[1].xDistance, 10, 50) ]]--
 end
     
 -- Draws a rectangle at the top of the screen, representing the sky

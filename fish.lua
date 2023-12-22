@@ -55,37 +55,32 @@ end
 -- Function to detect when player is within a certain distance, and alter state to either attack or retreat based on which fish is bigger
 -- Will also set state back to neutral if player puts a certain amount of distance between them
 function Fish:detectPlayer(player)
-  if self.state ~= 'alert' then
-    self:getSides()
-    player:getSides()
-    
-    if self.right < player.left then
-      -- Does two calculations to check if the fish and player are wrapping around the edge of the play area
-      self.xDistance = math.min(player.left - self.right, self.left + playAreaWidth - player.right)
-    elseif self.left > player.right then
-      -- Does two calculations to check if the fish and player are wrapping around the edge of the play area
-      self.xDistance = math.min(self.left - player.right, player.left + playAreaWidth - self.right)
-    else
-      self.xDistance = 0
-    end
-    if self.top > player.bottom then
-      self.yDistance = self.top - player.bottom
-    elseif self.bottom < player.top then
-      self.yDistance = player.top - self.bottom
-    else
-      self.yDistance = 0
-    end
-    
-    local distance = math.sqrt(self.xDistance ^ 2 + self.yDistance ^ 2)
-    if distance <= math.max(self.detectDistance - player.stealth, 20) then
-      if player.realSize >= self.realSize then
-        self.state = 'retreat'
-      elseif player.realSize < self.realSize and self.state ~= 'alert' and self.state ~= 'attack' then
-        self:setAlert()
+  if self.type ~= 'Puffer' then
+    if self.state ~= 'alert' then
+      self:getSides()
+      player:getSides()
+      -- Compare both left to right and right to left in case the two fish are on different "screens"
+      self.xDistance = math.min(self:findXDistance(self.left, player.right), self:findXDistance(self.right, player.left))
+      
+      if self.top > player.bottom then
+        self.yDistance = self.top - player.bottom
+      elseif self.bottom < player.top then
+        self.yDistance = player.top - self.bottom
+      else
+        self.yDistance = 0
       end
-    -- If the player reaches a certain distance from the enemy fish, the enemy fish will stop chasing and go back to a neutral state
-    elseif distance >= self.escapeDistance - (player.stealth / 2) then
-      self:setNeutral()
+      
+      local distance = math.sqrt(self.xDistance ^ 2 + self.yDistance ^ 2)
+      if distance <= math.max(self.detectDistance - player.stealth, 30 * self.sizeModifier) then
+        if player.realSize >= self.realSize then
+          self.state = 'retreat'
+        elseif player.realSize < self.realSize and self.state ~= 'alert' and self.state ~= 'attack' then
+          self:setAlert()
+        end
+      -- If the player reaches a certain distance from the enemy fish, the enemy fish will stop chasing and go back to a neutral state
+      elseif distance >= self.escapeDistance - (player.stealth / 2) then
+        self:setNeutral()
+      end
     end
   end
 end
@@ -164,6 +159,14 @@ function Fish:findXDirection(fish1x, fish2x)
     else
       return 'right'
     end
+  end
+end
+
+function Fish:findXDistance(fish1x, fish2x)
+  if fish1x > fish2x then
+    return math.min(fish1x - fish2x, fish1x + playAreaWidth - fish2x, fish2x + playAreaWidth - fish1x)
+  elseif fish2x > fish1x then
+    return math.min(fish2x - fish1x, fish1x + playAreaWidth - fish2x, fish2x + playAreaWidth - fish1x)
   end
 end
   

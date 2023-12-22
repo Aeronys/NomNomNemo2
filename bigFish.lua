@@ -10,11 +10,11 @@ function BigFish:new(x, y, sizeMod)
   self.minMoveTime = 50
   self.maxMoveTime = 500
   
-  self.detectDistance = 550
-  self.escapeDistance = 650
+  self.detectDistance = 450
+  self.escapeDistance = 500
   
   self.states = {
-    ['neutral'] = {['moveSpeed'] = 70},
+    ['neutral'] = {['moveSpeed'] = 60},
     ['retreat'] = {['moveSpeed'] = 450},
     ['attack'] = {['moveSpeed'] = 395},
     ['alert'] = {['moveSpeed'] = 0}

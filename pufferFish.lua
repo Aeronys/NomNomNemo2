@@ -6,16 +6,17 @@ function PufferFish:new(x, y, sizeMod)
   self.type = 'Puffer'
   self.startPosition = self.y
   
+  -- Puffer fish are a litter more forgiving with their size
+  self.realSize = self.realSize * .9
+  
   -- Randomize oscillation time and distance
   self.oscilTime = love.math.random(5, 10)
-  self.oscilDistance = love.math.random(150, 1200)
+  self.oscilDistance = love.math.random(150, 550)
   
-  self.minMoveTime = 50
-  self.maxMoveTime = 500
   self.detectDistance = 0
   self.escapeDistance = 0
   
-  self.xp = 10
+  self.xp = self.xp * 20
   
   self.states = {
     ['neutral'] = {['moveSpeed'] = 50},
