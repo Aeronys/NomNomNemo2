@@ -3,7 +3,8 @@ PufferFish = Fish:extend()
 function PufferFish:new(x, y, sizeMod)
   PufferFish.super.new(self, x, y, sizeMod, 'images/PNG/Retina/fishTile_101.png')
   
-  self.type = 'Puffer'
+  self.type = 'PufferFish'
+  self.xp = self.xp * 20
   self.startPosition = self.y
   
   -- Puffer fish are a litter more forgiving with their size
@@ -15,8 +16,6 @@ function PufferFish:new(x, y, sizeMod)
   
   self.detectDistance = 0
   self.escapeDistance = 0
-  
-  self.xp = self.xp * 20
   
   self.states = {
     ['neutral'] = {['moveSpeed'] = 50},

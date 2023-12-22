@@ -41,6 +41,7 @@ function love.load()
   
   -- Set fonts
   font24 = love.graphics.newFont(24)
+  font21 = love.graphics.newFont(21)
   font18 = love.graphics.newFont(18)
   font15 = love.graphics.newFont(15)
   defaultFont = love.graphics.newFont(12)
@@ -50,15 +51,18 @@ function love.load()
   playAreaHeight = 8000
   
   -- We set here our boundaries for where each type of fish can be spawned
-  -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
+  -- Names need to match type of each fish class
   fishTypes = {
-    {['Type'] = 'Fish', ['upperBound'] = 0, ['lowerBound'] = 2500, ['spawnBuffer'] = 100},
-    {['Type'] = 'StealthFish', ['upperBound'] = 1200, ['lowerBound'] = 4500, ['spawnBuffer'] = 300},
-    {['Type'] = 'GreenFish', ['upperBound'] = 3000, ['lowerBound'] = 6000, ['spawnBuffer'] = 500},
-    {['Type'] = 'BigFish', ['upperBound'] = 4500, ['lowerBound'] = 8000, ['spawnBuffer'] = 800},
-    {['Type'] = 'PufferFish', ['upperBound'] = 1500, ['lowerBound'] = 7000, ['spawnBuffer'] = 1000},
-    {['Type'] = 'Eel', ['upperBound'] = 0, ['lowerBound'] = playAreaHeight, ['spawnBuffer'] = 2000}
+    ['Fish'] = {['upperBound'] = 0, ['lowerBound'] = 2500, ['spawnBuffer'] = 100, ['edible'] = true},
+    ['StealthFish'] = {['upperBound'] = 1200, ['lowerBound'] = 4500, ['spawnBuffer'] = 300, ['edible'] = true},
+    ['GreenFish'] = {['upperBound'] = 3000, ['lowerBound'] = 6000, ['spawnBuffer'] = 500, ['edible'] = true},
+    ['BigFish'] = {['upperBound'] = 4500, ['lowerBound'] = 8000, ['spawnBuffer'] = 800, ['edible'] = true},
+    ['PufferFish'] = {['upperBound'] = 1500, ['lowerBound'] = 7000, ['spawnBuffer'] = 1000, ['edible'] = false},
+    ['Eel'] = {['upperBound'] = 0, ['lowerBound'] = playAreaHeight, ['spawnBuffer'] = 3000, ['edible'] = false}
     }
+  
+   -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
+  fishTypesAllowed = {'Fish', 'StealthFish', 'GreenFish', 'BigFish', 'PufferFish'}
   
   screenWidth = love.graphics.getWidth()
   screenHeight = love.graphics.getHeight()
@@ -164,7 +168,7 @@ end
 
 -- Generates a random fish to be added into the level
 function addRandomFish()
-  local fishType = love.math.random(#fishTypes - 1)
+  local fishType = fishTypesAllowed[love.math.random(#fishTypesAllowed)]
   local fishSize = 1 + love.math.random()
   local fishX = love.math.random(playAreaWidth)
   local fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
@@ -177,17 +181,17 @@ function addRandomFish()
   end
     
   -- We call different classes based on which fish we randomized
-  if fishType == 1 then
+  if fishType == 'Fish' then
     return Fish(fishX, fishY, fishSize)
-  elseif fishType == 2 then
+  elseif fishType == 'StealthFish' then
     return StealthFish(fishX, fishY, fishSize)
-  elseif fishType == 3 then
+  elseif fishType == 'GreenFish' then
     return GreenFish(fishX, fishY, fishSize)
-  elseif fishType == 4 then
+  elseif fishType == 'BigFish' then
     return BigFish(fishX, fishY, fishSize)
-  elseif fishType == 5 then
+  elseif fishType == 'PufferFish' then
     return PufferFish(fishX, fishY, fishSize)
-  elseif fishType == 6 then
+  elseif fishType == 'Eel' then
     return Eel(fishX, fishY, fishSize)
   end
 end
@@ -243,23 +247,16 @@ function drawSeaBed(seaBed)
 end
 
 function eatFish(player, fish, fishIndex)
-  -- If player is bigger, remove eaten fish and gain xp
-  if player.realSize >= fish.realSize then
-    local chomp = love.math.random(chompCount)
-    chomps[chomp]:play()
-    table.remove(fishies, fishIndex)
-    player:processXP(fish)
-    
-    -- Every time we eat a fish, we add two more in its place
-    -- This keeps player from being able to focus too much on smaller fish
-    -- We put a max amount just to make sure we don't completely break the game
-    if #fishies < maxFishAmount then
-      table.insert(fishies, addRandomFish())
-      table.insert(fishies, addRandomFish())
-    end
-  -- If other fish is bigger, reset the game
-  else
-    eatPlayer()
+  local chomp = love.math.random(chompCount)
+  chomps[chomp]:play()
+  table.remove(fishies, fishIndex)
+  player:processXP(fish)
+  
+  -- Every time we eat a fish, we add two more in its place
+  -- This keeps player from being able to focus too much on smaller fish
+  -- We put a max amount just to make sure we don't completely break the game
+  if #fishies < maxFishAmount then
+    table.insert(fishies, addRandomFish())
   end
 end
   
@@ -307,15 +304,11 @@ function reset()
 end
 
 function resolveCollision(player, fish, fishIndex)
-  -- Check first if the fish is a puffer or if puffers are edible
-  if fish.type == 'Puffer' then
-    if player.pufferEdible then
-      eatFish(player, fish, fishIndex)
-    else
-      eatPlayer()
-    end
-  else
+  -- If fish is edible and player is bigger, then eat the fish, otherwise, eat the player
+  if fishTypes[fish.type]['edible'] and player.realSize >= fish.realSize then
     eatFish(player, fish, fishIndex)
+  else
+    eatPlayer()
   end
 end
     

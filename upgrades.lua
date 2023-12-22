@@ -7,6 +7,11 @@ function Upgrades:new()
   self.xPos = screenWidth / 2 - self.width / 2
   self.yPos = screenHeight / 2 - self.height / 2
   
+  --Color schemes
+  lvlColor = {1, 1, .4, 1}
+  bgColor = {.5, .5, .5, .2}
+  buttonColor = {.3, .3, .3, .3}
+  
   -- Dimensions and positions of level up buttons
   self.numOfButtons = 3
   self.buttonWidth = 64
@@ -51,10 +56,13 @@ end
 
 function Upgrades:draw()
   if self.upgrading then
-    love.graphics.setColor(.5, .5, .5, .2)
+    love.graphics.setColor(bgColor)
     love.graphics.rectangle('fill', self.xPos, self.yPos, self.width, self.height)
     love.graphics.setColor(1, 1, 1)
     love.graphics.printf('Level up!', font24, self.xPos, self.yPos + 20, self.width, 'center')
+    love.graphics.setColor(lvlColor)
+    love.graphics.printf('Level '..player.level, font21, self.xPos, self.yPos + 55, self.width, 'center')
+    love.graphics.setColor(1, 1, 1)
     love.graphics.printf('Choose your upgrade:', font18, self.xPos, self.yPos + 90, self.width, 'center')
     
     if self.specializing then
@@ -68,10 +76,10 @@ end
 function Upgrades:drawButtons(buttons)
   -- Draw buttons from buttons list
   for i, v in ipairs(buttons) do
-      love.graphics.setColor(.3, .3, .3, .3)
+      love.graphics.setColor(buttonColor)
       love.graphics.rectangle('fill', v['xPos'], self.buttonYPos, self.buttonWidth, self.buttonHeight)
       if not specialing then
-        love.graphics.setColor(1, 1, .4, 1)
+        love.graphics.setColor(lvlColor)
         love.graphics.printf('Lvl '..self.upgradeList[i]['level'], font15, v['xPos'], (self.buttonYPos - 20), self.buttonWidth, 'center')
       end
       love.graphics.setColor(1, 1, 1, 1)
@@ -80,7 +88,7 @@ function Upgrades:drawButtons(buttons)
 end
 
 function Upgrades:eatPuffer(fish)
-  fish.pufferEdible = true
+  fishTypes['PufferFish']['edible'] = true
 end
 
 function Upgrades:grow(fish)

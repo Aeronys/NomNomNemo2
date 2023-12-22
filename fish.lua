@@ -6,6 +6,7 @@ function Fish:new(x, y, sizeMod, imagePath)
   imagePath = imagePath or 'images/PNG/Retina/fishTile_075.png'
   Fish.super.new(self, x, y, imagePath)
   
+  self.type = 'Fish'
   self.sizeModifier = sizeMod / 2
   self.currentRotation = 0
   self.moveRotation = 0.2
@@ -13,6 +14,8 @@ function Fish:new(x, y, sizeMod, imagePath)
   
   -- 1 represents facing right, -1 represents facing left
   self.faceDirection = 1
+  -- 1 is normal, -1 is flipped
+  self.yFlip = 1
   
   -- Move time is in milliseconds, which is why our divider is currently set to 100
   self.moveFrequency = 8    --Min 4, less means more frequent movement
@@ -45,7 +48,7 @@ function Fish:update(dt)
 end
 
 function Fish:draw()
-  love.graphics.draw(self.image, self.x, self.y, self.currentRotation, self.sizeModifier * self.faceDirection, self.sizeModifier, self.width / 2, self.height / 2)
+  love.graphics.draw(self.image, self.x, self.y, self.currentRotation, self.sizeModifier * self.faceDirection, self.sizeModifier * self.yFlip, self.width / 2, self.height / 2)
 
   if self.state == 'alert' then
     love.graphics.draw(self.alert.image, self.alert.x, self.alert.y, 0, self.alert.sizeMod)
@@ -142,6 +145,23 @@ function Fish:animateFish(dt)
   end
 end
 
+-- Makes sure that fish don't travel outside the game boundaries
+function Fish:checkBoundaries()
+  -- Have fish wrap around screen to other side if they reach the end of the play area
+  if self.x > playAreaWidth then
+      self.x = 0
+  elseif self.x < 0 then
+    self.x = playAreaWidth
+  end
+  
+  -- Keep fish from being able to go outside of vertical boundaries
+  if self.y < 0 + self.sizedHeight - self.realHeight - self.realY then
+    self.y = 0 + 0 + self.sizedHeight - self.realHeight - self.realY
+  elseif self.y > playAreaHeight - seaBedHeight - (self.sizedHeight - self.realHeight - self.realY) then
+    self.y = playAreaHeight - seaBedHeight - (self.sizedHeight - self.realHeight - self.realY)
+  end
+end
+
 -- Finds direction of fish1x in relation to fish2x
 -- i.e. if fish1x is to the left of fish 2x then this function will return 'left'
 function Fish:findXDirection(fish1x, fish2x)
@@ -210,19 +230,7 @@ function Fish:moveFish(direction, dt)
     self.currentRotation = 0
   end
   
-  -- Have fish wrap around screen to other side if they reach the end of the play area
-  if self.x > playAreaWidth then
-      self.x = 0
-  elseif self.x < 0 then
-    self.x = playAreaWidth
-  end
-  
-  -- Keep fish from being able to go outside of vertical boundaries
-  if self.y < 0 + self.sizedHeight - self.realHeight - self.realY then
-    self.y = 0 + 0 + self.sizedHeight - self.realHeight - self.realY
-  elseif self.y > playAreaHeight - seaBedHeight - (self.sizedHeight - self.realHeight - self.realY) then
-    self.y = playAreaHeight - seaBedHeight - (self.sizedHeight - self.realHeight - self.realY)
-  end
+  self:checkBoundaries()
 end
 
 function Fish:getRealDimensions()
