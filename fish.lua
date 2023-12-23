@@ -38,7 +38,7 @@ function Fish:new(x, y, sizeMod, imagePath)
     ['alert'] = {['moveSpeed'] = 0}
   }
   
-  self.xp = 100000
+  self.xp = 1
   self.xp = self.xp * (self.sizeModifier * 2)
   self.alertDuration = 1
 end
@@ -81,7 +81,7 @@ function Fish:detectPlayer(player)
           self:setAlert()
         end
       -- If the player reaches a certain distance from the enemy fish, the enemy fish will stop chasing and go back to a neutral state
-      elseif distance >= self.escapeDistance - (player.stealth / 2) then
+      elseif distance >= math.max(self.escapeDistance - (player.stealth / 2), 100 * self.sizeModifier) then
         self:setNeutral()
       end
     end

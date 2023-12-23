@@ -1,22 +1,13 @@
 Upgrades = Object:extend()
 
 function Upgrades:new()
-   -- Dimensions and positioning of level up window
-  self.width = 500
-  self.height = 300
-  self.xPos = screenWidth / 2 - self.width / 2
-  self.yPos = screenHeight / 2 - self.height / 2
+  -- Create window for upgrades, along with button parameters
+  upgradeScreen = Window(500, 300)
   
-  --Color schemes
-  lvlColor = {1, 1, .4, 1}
-  bgColor = {.5, .5, .5, .2}
-  buttonColor = {.3, .3, .3, .3}
-  
-  -- Dimensions and positions of level up buttons
-  self.numOfButtons = 3
   self.buttonWidth = 64
   self.buttonHeight = 64
-  self.buttonYPos = self.yPos + 200
+  self.buttonYOffset = 125
+  self.buttonYPos = upgradeScreen.height + self.buttonYOffset
   
   -- Upgrade Sound Effects
   sizeUpSE = love.audio.newSource('audio/soundEffects/sizeUp.wav', 'static')
@@ -48,35 +39,33 @@ function Upgrades:new()
 
   self.buttons = {}
   for i = 1, #self.upgradeList do
-    table.insert(self.buttons, {['xPos'] = self.xPos + ((self.width / (#self.upgradeList + 1)) * i) - (self.buttonWidth / 2), ['Type'] = self.upgradeList[i]['uText']})
+    table.insert(self.buttons, {['xPos'] = upgradeScreen.xPos + ((upgradeScreen.width / (#self.upgradeList + 1)) * i) - (self.buttonWidth / 2), ['Type'] = self.upgradeList[i]['uText']})
   end
   
   self.spButtons = {}
   for i = 1, #self.specialList do
-    table.insert(self.spButtons, {['xPos'] = self.xPos + ((self.width / (#self.specialList + 1)) * i) - (self.buttonWidth / 2), ['Type'] = self.specialList[i]['uText']})
+    table.insert(self.spButtons, {['xPos'] = upgradeScreen.xPos + ((upgradeScreen.width / (#self.specialList + 1)) * i) - (self.buttonWidth / 2), ['Type'] = self.specialList[i]['uText']})
   end
 end
 
 function Upgrades:draw()
   if self.upgrading then
-    love.graphics.setColor(bgColor)
-    love.graphics.rectangle('fill', self.xPos, self.yPos, self.width, self.height)
-    love.graphics.setColor(1, 1, 1)
-    love.graphics.printf('Level up!', font24, self.xPos, self.yPos + 20, self.width, 'center')
+    upgradeScreen:draw()
+    upgradeScreen:drawLine('Level up!', font24, 20)
     love.graphics.setColor(lvlColor)
-    love.graphics.printf('Level '..player.level, font21, self.xPos, self.yPos + 55, self.width, 'center')
+    upgradeScreen:drawLine('Level '..player.level, font21, 55)
     love.graphics.setColor(1, 1, 1)
-    love.graphics.printf('Choose your upgrade:', font18, self.xPos, self.yPos + 90, self.width, 'center')
+    upgradeScreen:drawLine('Choose your upgrade:', font18, 90)
     
     if self.specializing then
-      self:drawButtons(self.spButtons)
+      upgradeScreen:drawButtons(self.spButtons, self.buttonWidth, self.buttonHeight, self.buttonYOffset)
     else
-      self:drawButtons(self.buttons)
+      upgradeScreen:drawButtons(self.buttons, self.buttonWidth, self.buttonHeight, self.buttonYOffset)
     end
   end
 end
 
-function Upgrades:drawButtons(buttons)
+--[[function Upgrades:drawButtons(buttons)
   -- Draw buttons from buttons list
   for i, v in ipairs(buttons) do
       love.graphics.setColor(buttonColor)
@@ -88,7 +77,7 @@ function Upgrades:drawButtons(buttons)
       love.graphics.setColor(1, 1, 1, 1)
       love.graphics.printf(v['Type'], v['xPos'], (self.buttonYPos + self.buttonHeight / 2) - 15, self.buttonWidth, 'center')
   end
-end
+end]]--
 
 function Upgrades:eatPuffer(fish)
   fishTypes['PufferFish']['edible'] = true
@@ -130,11 +119,7 @@ function Upgrades:chooseUpgrade(fish)
     self.specializing = true
     if fish.level == 20 then
       table.insert(self.specialList, self.eelUpgrade)
-      print(self.xPos)
-      print(self.width)
-      print(#self.specialList)
-      print(self.buttonWidth)
-      table.insert(self.spButtons, {['xPos'] = self.xPos + ((self.width / (#self.specialList + 1))) - (self.buttonWidth / 2), ['Type'] = self.specialList[1]['uText']})
+      table.insert(self.spButtons, {['xPos'] = upgradeScreen.xPos + ((upgradeScreen.width / (#self.specialList + 1))) - (self.buttonWidth / 2), ['Type'] = self.specialList[1]['uText']})
     end
   end
 end

@@ -10,6 +10,7 @@ function love.load()
   require "pufferFish"
   require "stealthFish"
   require "player"
+  require "window"
   
   -- Set up audio files
   chomps = {}
@@ -251,6 +252,11 @@ function eatFish(player, fish, fishIndex)
   chomps[chomp]:play()
   table.remove(fishies, fishIndex)
   player:processXP(fish)
+  
+  if fish.type == 'Eel' and eelEaten == false then
+    eelEaten = true
+    --drawVictory()
+  end
   
   -- Every time we eat a fish, we add two more in its place
   -- This keeps player from being able to focus too much on smaller fish

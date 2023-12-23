@@ -13,6 +13,7 @@ function Player:new(x, y, sizeMod)
   self.pufferEdible = false
   self.upgrades = Upgrades()
   self.predator = false
+  self.ealEaten = false
 end
 
 
