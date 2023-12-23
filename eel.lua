@@ -8,6 +8,9 @@ function Eel:new(x, y, sizeMod)
   self.type = 'Eel'
   self.xp = self.xp * 10000
   
+  -- The only condition to be able to eat eels is that you have the eat eels upgrade
+  self.realSize = 1
+  
   self.moveFrequency = 4
   self.minMoveTime = 20
   self.maxMoveTime = 200

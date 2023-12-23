@@ -59,6 +59,10 @@ function Player:levelUp()
   if self.levelUps[self.level] ~= self.max and self.xp >= self.levelUps[self.level] then
     self.level = self.level + 1
     self.upgrades:chooseUpgrade(self)
+    -- At level 18 we will start spawning eels into the sea
+    if self.level == 18 then
+      table.insert(fishTypesAllowed, 'Eel')
+    end
   end
 end
   

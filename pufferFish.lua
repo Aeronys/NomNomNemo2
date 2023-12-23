@@ -7,7 +7,7 @@ function PufferFish:new(x, y, sizeMod)
   self.xp = self.xp * 20
   self.startPosition = self.y
   
-  -- Puffer fish are a litter more forgiving with their size
+  -- Puffer fish are a little more forgiving with their size
   self.realSize = self.realSize * .9
   
   -- Randomize oscillation time and distance

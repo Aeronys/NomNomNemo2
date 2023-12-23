@@ -43,6 +43,8 @@ function Upgrades:new()
     {['uText'] = 'Eat Puffer Fish', ['uFunction'] = self.eatPuffer, ['sound'] = eatPufferSE},
   }
   
+  self.eelUpgrade = {['uText'] = 'Eat Eels', ['uFunction'] = self.eatEel, ['sound'] = eatPufferSE}
+
   self.buttons = {}
   for i = 1, #self.upgradeList do
     table.insert(self.buttons, {['xPos'] = self.xPos + ((self.width / (#self.upgradeList + 1)) * i) - (self.buttonWidth / 2), ['Type'] = self.upgradeList[i]['uText']})
@@ -91,6 +93,10 @@ function Upgrades:eatPuffer(fish)
   fishTypes['PufferFish']['edible'] = true
 end
 
+function Upgrades:eatEel(fish)
+  fishTypes['Eel']['edible'] = true
+end
+
 function Upgrades:grow(fish)
   fish.sizeModifier = fish.sizeModifier + .125
   
@@ -114,8 +120,16 @@ function Upgrades:chooseUpgrade(fish)
   pause = true
   self.upgrading = true
   
-  if fish.level == 5 or fish.level == 10 then
+  if fish.level == 5 or fish.level == 10 or fish.level == 20 then
     self.specializing = true
+    if fish.level == 20 then
+      table.insert(self.specialList, self.eelUpgrade)
+      print(self.xPos)
+      print(self.width)
+      print(#self.specialList)
+      print(self.buttonWidth)
+      table.insert(self.spButtons, {['xPos'] = self.xPos + ((self.width / (#self.specialList + 1))) - (self.buttonWidth / 2), ['Type'] = self.specialList[1]['uText']})
+    end
   end
 end
 
