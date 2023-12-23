@@ -34,7 +34,6 @@ function Upgrades:new()
     {['uText'] = 'Eat Puffer Fish', ['uFunction'] = self.eatPuffer, ['sound'] = eatPufferSE},
     {['uText'] = 'Eat Bigger Fish (+10%)', ['uFunction'] = self.predatorOn, ['sound'] = eatPufferSE}
   }
-  
   self.eelUpgrade = {['uText'] = 'Eat Eels (Any Size)', ['uFunction'] = self.eatEel, ['sound'] = eatPufferSE}
 
   self.buttons = {}
@@ -60,24 +59,15 @@ function Upgrades:draw()
     if self.specializing then
       upgradeScreen:drawButtons(self.spButtons, self.buttonWidth, self.buttonHeight, self.buttonYOffset)
     else
-      upgradeScreen:drawButtons(self.buttons, self.buttonWidth, self.buttonHeight, self.buttonYOffset)
+      -- Prepare our lvl headings over each of our buttons
+      local buttonHeadings = {}
+      for i,v in ipairs(self.upgradeList) do
+        table.insert(buttonHeadings, 'Lvl '..v['level'])
+      end
+      upgradeScreen:drawButtons(self.buttons, self.buttonWidth, self.buttonHeight, self.buttonYOffset, true, buttonHeadings, lvlColor)
     end
   end
 end
-
---[[function Upgrades:drawButtons(buttons)
-  -- Draw buttons from buttons list
-  for i, v in ipairs(buttons) do
-      love.graphics.setColor(buttonColor)
-      love.graphics.rectangle('fill', v['xPos'], self.buttonYPos, self.buttonWidth, self.buttonHeight)
-      if not self.specializing then
-        love.graphics.setColor(lvlColor)
-        love.graphics.printf('Lvl '..self.upgradeList[i]['level'], font15, v['xPos'], (self.buttonYPos - 20), self.buttonWidth, 'center')
-      end
-      love.graphics.setColor(1, 1, 1, 1)
-      love.graphics.printf(v['Type'], v['xPos'], (self.buttonYPos + self.buttonHeight / 2) - 15, self.buttonWidth, 'center')
-  end
-end]]--
 
 function Upgrades:eatPuffer(fish)
   fishTypes['PufferFish']['edible'] = true

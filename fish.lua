@@ -38,7 +38,7 @@ function Fish:new(x, y, sizeMod, imagePath)
     ['alert'] = {['moveSpeed'] = 0}
   }
   
-  self.xp = 1
+  self.xp = 100000
   self.xp = self.xp * (self.sizeModifier * 2)
   self.alertDuration = 1
 end
