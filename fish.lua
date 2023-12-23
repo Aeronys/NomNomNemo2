@@ -38,7 +38,7 @@ function Fish:new(x, y, sizeMod, imagePath)
     ['alert'] = {['moveSpeed'] = 0}
   }
   
-  self.xp = 1
+  self.xp = 100000
   self.xp = self.xp * (self.sizeModifier * 2)
   self.alertDuration = 1
 end
@@ -271,6 +271,11 @@ function Fish:getRealDimensions()
   -- Simple length * width to determine size
   -- Tried using pixel counts, but this created results that didn't always feel right in-game
   realSize = (maxX - minX) * (maxY - minY)
+  
+  -- Increase realSize if player has the predator upgrade
+  if self.predator then
+    realSize = realSize * 1.1
+  end
   
   -- return real width and height of image after removing the blank space
   return maxX - minX, maxY - minY, minX, minY, realSize

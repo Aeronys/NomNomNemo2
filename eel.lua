@@ -1,9 +1,8 @@
 Eel = Fish:extend()
 
 function Eel:new(x, y, sizeMod)
-  -- Big fish are big, so increase their sizeMod by 1
-  sizeMod = 2.5
-  BigFish.super.new(self, x, y, sizeMod, 'images/PNG/Retina/fishTile_128.png')
+  sizeMod = sizeMod + 1
+  Eel.super.new(self, x, y, sizeMod, 'images/PNG/Retina/fishTile_128.png')
   
   self.type = 'Eel'
   self.xp = self.xp * 10000
@@ -19,10 +18,7 @@ function Eel:new(x, y, sizeMod)
   self.escapeDistance = 0
   
   self.states = {
-    ['neutral'] = {['moveSpeed'] = 800},
-    ['retreat'] = {['moveSpeed'] = 500},
-    ['attack'] = {['moveSpeed'] = 395},
-    ['alert'] = {['moveSpeed'] = 0}
+    ['neutral'] = {['moveSpeed'] = 800}
   }
 end
 

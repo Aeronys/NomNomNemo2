@@ -12,6 +12,7 @@ function Player:new(x, y, sizeMod)
   self.stealth = 0
   self.pufferEdible = false
   self.upgrades = Upgrades()
+  self.predator = false
 end
 
 

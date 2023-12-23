@@ -41,9 +41,10 @@ function Upgrades:new()
   self.specialList = {
     {['uText'] = 'See Stealth Fish', ['uFunction'] = self.seeStealth, ['sound'] = seeStealthSE},
     {['uText'] = 'Eat Puffer Fish', ['uFunction'] = self.eatPuffer, ['sound'] = eatPufferSE},
+    {['uText'] = 'Eat Bigger Fish (+10%)', ['uFunction'] = self.predatorOn, ['sound'] = eatPufferSE}
   }
   
-  self.eelUpgrade = {['uText'] = 'Eat Eels', ['uFunction'] = self.eatEel, ['sound'] = eatPufferSE}
+  self.eelUpgrade = {['uText'] = 'Eat Eels (Any Size)', ['uFunction'] = self.eatEel, ['sound'] = eatPufferSE}
 
   self.buttons = {}
   for i = 1, #self.upgradeList do
@@ -80,7 +81,7 @@ function Upgrades:drawButtons(buttons)
   for i, v in ipairs(buttons) do
       love.graphics.setColor(buttonColor)
       love.graphics.rectangle('fill', v['xPos'], self.buttonYPos, self.buttonWidth, self.buttonHeight)
-      if not specialing then
+      if not self.specializing then
         love.graphics.setColor(lvlColor)
         love.graphics.printf('Lvl '..self.upgradeList[i]['level'], font15, v['xPos'], (self.buttonYPos - 20), self.buttonWidth, 'center')
       end
@@ -104,6 +105,11 @@ function Upgrades:grow(fish)
   fish:updateDimensions()
 end
 
+function Upgrades:predatorOn(fish)
+  fish.predator = true
+  fish:updateDimensions()
+end
+
 function Upgrades:seeStealth(fish)
   StealthFish:stealthOff()
 end
@@ -120,7 +126,7 @@ function Upgrades:chooseUpgrade(fish)
   pause = true
   self.upgrading = true
   
-  if fish.level == 5 or fish.level == 10 or fish.level == 20 then
+  if fish.level % 5 == 0 and fish.level <= 20 then
     self.specializing = true
     if fish.level == 20 then
       table.insert(self.specialList, self.eelUpgrade)

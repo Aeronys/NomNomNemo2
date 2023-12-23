@@ -8,7 +8,7 @@ function PufferFish:new(x, y, sizeMod)
   self.startPosition = self.y
   
   -- Puffer fish are a little more forgiving with their size
-  self.realSize = self.realSize * .9
+  self.realSize = self.realSize * .95
   
   -- Randomize oscillation time and distance
   self.oscilTime = love.math.random(5, 10)
@@ -18,10 +18,7 @@ function PufferFish:new(x, y, sizeMod)
   self.escapeDistance = 0
   
   self.states = {
-    ['neutral'] = {['moveSpeed'] = 50},
-    ['retreat'] = {['moveSpeed'] = 50},
-    ['attack'] = {['moveSpeed'] = 50},
-    ['alert'] = {['moveSpeed'] = 50}
+    ['neutral'] = {['moveSpeed'] = 50}
   }
 end
 
