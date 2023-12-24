@@ -58,7 +58,7 @@ end
 -- Function to detect when player is within a certain distance, and alter state to either attack or retreat based on which fish is bigger
 -- Will also set state back to neutral if player puts a certain amount of distance between them
 function Fish:detectPlayer(player)
-  if self.type ~= 'Puffer' then
+  if self.type ~= 'PufferFish' and self.type ~= 'Eel' then
     if self.state ~= 'alert' then
       self:getSides()
       player:getSides()

@@ -53,20 +53,6 @@ function love.load()
   playAreaWidth = 5500
   playAreaHeight = 8000
   
-  -- We set here our boundaries for where each type of fish can be spawned
-  -- Names need to match type of each fish class
-  fishTypes = {
-    ['Fish'] = {['upperBound'] = 0, ['lowerBound'] = 2500, ['spawnBuffer'] = 100, ['edible'] = true},
-    ['StealthFish'] = {['upperBound'] = 1200, ['lowerBound'] = 4500, ['spawnBuffer'] = 300, ['edible'] = true},
-    ['GreenFish'] = {['upperBound'] = 3000, ['lowerBound'] = 6000, ['spawnBuffer'] = 500, ['edible'] = true},
-    ['BigFish'] = {['upperBound'] = 4500, ['lowerBound'] = 8000, ['spawnBuffer'] = 800, ['edible'] = true},
-    ['PufferFish'] = {['upperBound'] = 1500, ['lowerBound'] = 7000, ['spawnBuffer'] = 1000, ['edible'] = false},
-    ['Eel'] = {['upperBound'] = 0, ['lowerBound'] = playAreaHeight, ['spawnBuffer'] = 3000, ['edible'] = true}
-    }
-  
-   -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
-  fishTypesAllowed = {'Fish', 'StealthFish', 'GreenFish', 'BigFish', 'PufferFish'}
-  
   -- Get screen dimensions
   screenWidth = love.graphics.getWidth()
   screenHeight = love.graphics.getHeight()
@@ -343,6 +329,20 @@ end
 
 -- Resets the game to starting values and creates new fish and seabed tables
 function reset()
+  -- We set here our boundaries for where each type of fish can be spawned
+  -- Names need to match type of each fish class
+  fishTypes = {
+    ['Fish'] = {['upperBound'] = 0, ['lowerBound'] = 2500, ['spawnBuffer'] = 100, ['edible'] = true},
+    ['StealthFish'] = {['upperBound'] = 1200, ['lowerBound'] = 4500, ['spawnBuffer'] = 300, ['edible'] = true},
+    ['GreenFish'] = {['upperBound'] = 3000, ['lowerBound'] = 6000, ['spawnBuffer'] = 500, ['edible'] = true},
+    ['BigFish'] = {['upperBound'] = 4500, ['lowerBound'] = 8000, ['spawnBuffer'] = 800, ['edible'] = true},
+    ['PufferFish'] = {['upperBound'] = 1500, ['lowerBound'] = 7000, ['spawnBuffer'] = 1000, ['edible'] = false},
+    ['Eel'] = {['upperBound'] = 0, ['lowerBound'] = playAreaHeight, ['spawnBuffer'] = 3000, ['edible'] = false}
+    }
+  
+   -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
+  fishTypesAllowed = {'Fish', 'StealthFish', 'GreenFish', 'BigFish', 'PufferFish'}
+  
    -- Randomly pick seabed images to make up our seabed
   seaBed = randomizeSeaBed()
   
