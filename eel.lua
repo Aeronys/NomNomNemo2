@@ -5,7 +5,7 @@ function Eel:new(x, y, sizeMod)
   Eel.super.new(self, x, y, sizeMod, 'images/PNG/Retina/fishTile_128.png')
   
   self.type = 'Eel'
-  self.xp = self.xp * 10000
+  self.xp = self.xp * 4000
   
   -- The only condition to be able to eat eels is that you have the eat eels upgrade
   self.realSize = 1
@@ -18,7 +18,10 @@ function Eel:new(x, y, sizeMod)
   self.escapeDistance = 0
   
   self.states = {
-    ['neutral'] = {['moveSpeed'] = 800}
+    ['neutral'] = {['moveSpeed'] = 800},
+    ['retreat'] = {['moveSpeed'] = 800},
+    ['attack'] = {['moveSpeed'] = 800},
+    ['alert'] = {['moveSpeed'] = 800}
   }
 end
 

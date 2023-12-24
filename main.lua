@@ -20,6 +20,8 @@ function love.load()
     table.insert(chomps, sfx)
   end
   
+  buttonClick = love.audio.newSource('audio/soundEffects/buttonClick.wav', 'static')
+  buttonClick:setVolume(0.25)
   gulp = love.audio.newSource('audio/soundEffects/nemoGulp1.wav', 'static')
   waves = love.audio.newSource('audio/soundEffects/waves.wav', 'stream')
   waves:setLooping(true)
@@ -59,14 +61,28 @@ function love.load()
     ['GreenFish'] = {['upperBound'] = 3000, ['lowerBound'] = 6000, ['spawnBuffer'] = 500, ['edible'] = true},
     ['BigFish'] = {['upperBound'] = 4500, ['lowerBound'] = 8000, ['spawnBuffer'] = 800, ['edible'] = true},
     ['PufferFish'] = {['upperBound'] = 1500, ['lowerBound'] = 7000, ['spawnBuffer'] = 1000, ['edible'] = false},
-    ['Eel'] = {['upperBound'] = 0, ['lowerBound'] = playAreaHeight, ['spawnBuffer'] = 3000, ['edible'] = false}
+    ['Eel'] = {['upperBound'] = 0, ['lowerBound'] = playAreaHeight, ['spawnBuffer'] = 3000, ['edible'] = true}
     }
   
    -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
   fishTypesAllowed = {'Fish', 'StealthFish', 'GreenFish', 'BigFish', 'PufferFish'}
   
+  -- Get screen dimensions
   screenWidth = love.graphics.getWidth()
   screenHeight = love.graphics.getHeight()
+  
+  -- Set up pause/victory screen and buttons
+  mainScreen = Window(700, 500)
+  mainButtonWidth = 128
+  mainButtonHeight = 80
+  mainButtonYOffset = 360
+  mainButtonYPos = mainScreen.yPos + mainButtonYOffset
+  
+  mainButtonInfo = {
+    {['uText'] = 'Reset Game',  ['sound'] = seeStealthSE},
+    {['uText'] = 'Continue', ['sound'] = eatPufferSE}
+  }
+  mainButtons = mainScreen:prepareButtons(mainButtonInfo, mainButtonWidth)
   
   -- Set variables needed to draw our sky later
   sky = {
@@ -100,6 +116,8 @@ end
 function love.update(dt)
   if not pause then
     gameTimer = gameTimer + dt
+    formattedTimer = convertTimer()
+    
     player:update(dt)
     
     -- Check for collisions between player and other fish
@@ -117,38 +135,43 @@ function love.update(dt)
 end
 
 function love.draw()
-  if not pauseDraw then
-    --Draw 3 copies of everything so that we can continuously wrap around the screen without any gaps
-    for i = -1, 1 do
-      adjustCamera(i)
-      
-      --Draw the sea
-      love.graphics.draw(sea, 0, 0, 0, playAreaWidth, playAreaHeight)
-      
-      -- Draw the sky
-      drawSky()
+  --Draw 3 copies of everything so that we can continuously wrap around the screen without any gaps
+  for i = -1, 1 do
+    adjustCamera(i)
+    
+    --Draw the sea
+    love.graphics.draw(sea, 0, 0, 0, playAreaWidth, playAreaHeight)
+    
+    -- Draw the sky
+    drawSky()
+  end
+  
+  -- We use separate for loops to make sure our background is drawn before player and fish, so that we don't get parts of the fish cut off at the edge of the screen overlaps
+  for i = -1, 1 do
+    adjustCamera(i)
+    
+    -- Draw the player
+    player:draw()
+    
+    -- Draw all other fish
+    for i, v in ipairs(fishies) do
+      v:draw()
     end
     
-    -- We use separate for loops to make sure our background is drawn before player and fish, so that we don't get parts of the fish cut off at the edge of the screen overlaps
-    for i = -1, 1 do
-      adjustCamera(i)
-      
-      -- Draw the player
-      player:draw()
-      
-      -- Draw all other fish
-      for i, v in ipairs(fishies) do
-        v:draw()
-      end
-      
-      -- Draw sea bed
-      drawSeaBed(seaBed)
-      
-      -- Shows player's current level and experience points
-      drawPlayerTable()
-      
-      -- Draw upgrades table
+    -- Draw sea bed
+    drawSeaBed(seaBed)
+    
+    -- Shows player's current level and experience points
+    drawPlayerTable()
+    
+    --Draw window based on game state
+    --Priority goes victory > upgrade > pause
+    if victory then
+      drawVictory()
+    elseif player.upgrades.upgrading then 
       player.upgrades:draw()
+    elseif pause then
+      drawPause()
     end
   end
 end
@@ -197,32 +220,27 @@ function addRandomFish()
   end
 end
   
+function convertTimer()
+  -- Convert gamer timer into minutes, seconds, and milliseconds
+  local gameMinutes = math.floor(gameTimer / 60)
+  local gameSeconds = gameTimer % 60
+  local gameMS = (gameSeconds * 100) % 100
+  
+  -- Format game time to look nicer on screen
+  return string.format('%02i:%02i:%02i', gameMinutes, gameSeconds, gameMS)
+end
+
 function drawPlayerTable()
   local tableXPos = 10
   
   -- Reset origin so table will always be in same spot on screen
   love.graphics.origin()
-  --love.graphics.setColor(0, 0, 0)
-  --love.graphics.print('player x: '..player.x..' fish x '..fishies[1].x, 0, 0)
   love.graphics.setColor(1, 1, 1)
   
-  -- Convert gamer timer into minutes, seconds, and milliseconds
-  gameMinutes = math.floor(gameTimer / 60)
-  gameSeconds = gameTimer % 60
-  gameMS = (gameSeconds * 100) % 100
-  
-  -- Format game time to look nicer on screen
-  formattedTime = string.format('%02i:%02i:%02i', gameMinutes, gameSeconds, gameMS)
-  
   -- Print game time, player level, and xp
-  love.graphics.print('Time Elapsed: '..formattedTime, tableXPos, screenHeight - 60)
+  love.graphics.print('Time Elapsed: '..formattedTimer, tableXPos, screenHeight - 60)
   love.graphics.print('Level: '..player.level, tableXPos, screenHeight - 40)
   love.graphics.print('XP: '..math.floor(player.xp)..'/'..player.levelUps[player.level], tableXPos, screenHeight - 20)
-  
-  --[[ Debugging table
-  --love.graphics.print('Player_x: '..player.x, 10, 10)
-  love.graphics.print('Fish_x: '..fishies[1].x, 10, 30)
-  love.graphics.print('Distance: '..fishies[1].xDistance, 10, 50) ]]--
 end
     
 -- Draws a rectangle at the top of the screen, representing the sky
@@ -247,16 +265,54 @@ function drawSeaBed(seaBed)
   end
 end
 
+-- Draw pause screen
+function drawPause()
+  mainScreen.bgColor = {.5, .5, .5, .3}
+  mainScreen:draw()
+  mainScreen:drawLine('Game Paused', font24, 30)
+  mainScreen:drawLine('Eat smaller fish, while avoiding the bigger fish!', font18, 80)
+  mainScreen:drawLine('Current level: '..player.level, font15, 120, mainScreen.lvlColor)
+  
+  -- Display current upgrade levels
+  for i,v in ipairs(player.upgrades.upgradeList) do
+    mainScreen:drawLine(v['name']..': '..v['level'], defaultFont, 150 + ((i-1) * 20), mainScreen.lvlColor)
+  end
+  
+  -- If player has specializations display them here
+  if player.upgradeTracker then
+    mainScreen:drawLine('Upgrades: '..player.upgradeTracker, font18, 315, mainScreen.lvlColor)
+  end
+  
+  -- Reset and Continue buttons
+  mainScreen:drawButtons(mainButtons, mainButtonWidth, mainButtonHeight, mainButtonYOffset, font15)
+end
+
+-- Draw victory screen
+function drawVictory()
+  pause = true
+    
+  mainScreen:draw()
+  mainScreen:drawLine('Victory!', font24, 30, {0, 1, .9, 1})
+  mainScreen:drawLine("By eaten an eel, you've proven yourself ruler of the sea!", font18, 80)
+  mainScreen:drawLine('Time taken: '..formattedTimer, font21, 140)
+  mainScreen:drawLine('Fish eaten: '..player.eatCount, font21, 170)
+  mainScreen:drawLine('Continue playing?', font21, 310)
+  mainScreen:drawButtons(mainButtons, mainButtonWidth, mainButtonHeight, mainButtonYOffset, font15)
+end
+
 function eatFish(player, fish, fishIndex)
   local chomp = love.math.random(chompCount)
   chomps[chomp]:play()
+  player.eatCount = player.eatCount + 1
   table.remove(fishies, fishIndex)
   player:processXP(fish)
   
-  if fish.type == 'Eel' and eelEaten == false then
-    eelEaten = true
-    --drawVictory()
+  print(fish.type, player.eelEaten, player.upgrades.upgrading)
+  if fish.type == 'Eel' and player.eelEaten == false then
+    player.eelEaten = true
+    victory = true
   end
+  print(victory)
   
   -- Every time we eat a fish, we add two more in its place
   -- This keeps player from being able to focus too much on smaller fish
@@ -293,6 +349,7 @@ function reset()
   -- Initialize game timer and pause status
   gameTimer = 0
   pause = false
+  victory = false
   
   -- Initialize player
   player = Player(playAreaWidth / 2, 200, playerStartSize)
@@ -328,6 +385,19 @@ function toggleBGM()
   end
 end
 
+-- Simple returns true or false based on whether a mouse click has landed on a button
+function buttonClicked(mouseX, mouseY, buttonX, buttonY, buttonWidth, buttonHeight)
+  if mouseX >= buttonX and 
+    mouseX <= buttonX + buttonWidth and 
+    mouseY >= buttonY and 
+    mouseY <= buttonY + buttonHeight then
+      
+    return true
+  else
+    return false
+  end
+end
+
 -- Set player rotation back to zero whenever the w, s, down, or up keys are released
 function love.keyreleased(key)
   if key == 'down' or key =='up' or key == 'w' or key == 's' then
@@ -336,7 +406,7 @@ function love.keyreleased(key)
   
   -- p will be our pause button
   -- Check if we're upgrading so player can't unpause during upgrade screen
-  if (key == 'p' or key == 'space') and not player.upgrades.upgrading then
+  if (key == 'p' or key == 'space' or key == 'escape') and not (player.upgrades.upgrading or victory) then
     pause = not pause
   end
   
@@ -347,8 +417,24 @@ end
 
 -- Select upgrades with left mouse button
 function love.mousereleased(mouseX, mouseY, button)
-  if player.upgrades.upgrading then
+  if victory or (pause and not player.upgrades.upgrading) then
+    -- First button is our reset button
+    if buttonClicked(mouseX, mouseY, mainButtons[1]['xPos'], mainButtonYPos, mainButtonWidth, mainButtonHeight) then
+      buttonClick:play()
+      reset()
+    -- Second button is the continue button
+    elseif buttonClicked(mouseX, mouseY, mainButtons[2]['xPos'], mainButtonYPos, mainButtonWidth, mainButtonHeight) then
+      buttonClick:play()
+      victory = false
+      -- Game should stay paused if player is upgrading
+      if not player.upgrades.upgrading then
+        pause = false
+      end
+    end
+        
+  elseif player.upgrades.upgrading then
     if button == 1 then
+      -- Upgrades class handles processing of button clicks while upgrading
       if player.upgrades.specializing then
         player.upgrades:selectUpgrade(mouseX, mouseY, player, player.upgrades.spButtons)
       else
