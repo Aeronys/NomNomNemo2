@@ -25,7 +25,7 @@ function love.load()
   buttonClick = love.audio.newSource('audio/soundEffects/buttonClick.wav', 'static')
   buttonClick:setVolume(0.25)
   gulp = love.audio.newSource('audio/soundEffects/nemoGulp1.wav', 'static')
-  waves = love.audio.newSource('audio/soundEffects/waves2.wav', 'stream')
+  waves = love.audio.newSource('audio/soundEffects/waves.wav', 'stream')
   waves:setLooping(true)
   
   bgm = love.audio.newSource('audio/music/aquarium-fish-132518.mp3', 'stream')
