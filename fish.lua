@@ -122,7 +122,7 @@ function Fish:animateFish(dt)
       self:moveFish(self:findXDirection(player.x, self.x), dt)
     end
     
-    if player.y >= self.y then
+    if player.y > self.y then
       self:moveFish('down', dt)
     -- Distance needs to be more than 1, to keep fish from constantly spinning in place when it lines up with player
     elseif self.yDistance > 0 then
