@@ -14,6 +14,14 @@ Finally, a win condition has been added to the game, where the player is declare
 
 Swim around the ocean, trying to eat fish that are smaller than you while avoiding fish that are bigger than you. Level up to improve your abilities so that you can eat bigger, more valuable fish, until you beat the game by finally managing to eat an eel. After beating the game you have the option of either continuing to play, endlessly eating fish around you (or being eaten yourself), or reseting the game and playing again.
 
+## Game Controls
+
+**Movement** - wsad or arrow keys
+
+**Pause** - p, space, or esc
+
+**Mute music** - m
+
 ## Types of enemy fish
 
 **Basic Fish** - These fish are a pink-purple color, and are the first types of fish you encounter in the game. They are meant to give a starting point into gameplay.
@@ -51,14 +59,6 @@ Throughout the game, eels will neither chase or retreat from the player, but the
 **Predator** - Enables the player to eat fish that are up to 10% larger than the player
 
 **Eel Slurper** - Enables the player to eat eels of any size, which is necessary to win the game
-
-## Game Controls
-
-**Movement** - wsad or arrow keys
-
-**Pause** - p, space, or esc
-
-**Mute music** - m
 
 ## Implementation
 
