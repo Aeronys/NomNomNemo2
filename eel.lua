@@ -18,10 +18,7 @@ function Eel:new(x, y, sizeMod)
   self.escapeDistance = 0
   
   self.states = {
-    ['neutral'] = {['moveSpeed'] = 800},
-    ['retreat'] = {['moveSpeed'] = 800},
-    ['attack'] = {['moveSpeed'] = 800},
-    ['alert'] = {['moveSpeed'] = 800}
+    ['neutral'] = {['moveSpeed'] = 800}
   }
 end
 

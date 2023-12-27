@@ -279,7 +279,7 @@ function drawVictory()
     
   mainScreen:draw()
   mainScreen:drawLine('Victory!', font24, 30, {0, 1, .9, 1})
-  mainScreen:drawLine("By eaten an eel, you've proven yourself ruler of the sea!", font18, 80)
+  mainScreen:drawLine("By eating an eel, you've proven yourself ruler of the sea!", font18, 80)
   mainScreen:drawLine('Time taken: '..formattedTimer, font21, 140)
   mainScreen:drawLine('Fish eaten: '..player.eatCount, font21, 170)
   mainScreen:drawLine('Continue playing?', font21, 310)
@@ -293,7 +293,6 @@ function eatFish(player, fish, fishIndex)
   table.remove(fishies, fishIndex)
   player:processXP(fish)
   
-  print(fish.type, player.eelEaten, player.upgrades.upgrading)
   if fish.type == 'Eel' and player.eelEaten == false then
     player.eelEaten = true
     victory = true

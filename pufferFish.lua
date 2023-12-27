@@ -18,10 +18,7 @@ function PufferFish:new(x, y, sizeMod)
   self.escapeDistance = 0
   
   self.states = {
-    ['neutral'] = {['moveSpeed'] = 50},
-    ['attack'] = {['moveSpeed'] = 50},
-    ['retreat'] = {['moveSpeed'] = 50},
-    ['alert'] = {['moveSpeed'] = 50}
+    ['neutral'] = {['moveSpeed'] = 50}
   }
 end
 
