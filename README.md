@@ -106,9 +106,9 @@ Another challenge was deciding when it was appropriate to create a new class, an
 
 ### Code
 
-**classic.lua** - https://github.com/rxi/classic
+classic.lua - https://github.com/rxi/classic
 
-**function gradientMesh(dir, ...)** - https://love2d.org/wiki/Gradients
+function gradientMesh(dir, ...) - https://love2d.org/wiki/Gradients
 
 ### Images
 
