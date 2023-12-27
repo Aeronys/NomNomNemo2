@@ -55,7 +55,9 @@ Throughout the game, eels will neither chase or retreat from the player, but the
 ## Game Controls
 
 **Movement** - wsad or arrow keys
+
 **Pause** - p, space, or esc
+
 **Mute music** - m
 
 ## Implementation
