@@ -1,7 +1,7 @@
 BigFish = Fish:extend()
 
 function BigFish:new(x, y, sizeMod)
-  -- Big fish are big, so increase their sizeMod by 1
+  -- Big fish are big, so increase their sizeMod here
   sizeMod = sizeMod + .7
   BigFish.super.new(self, x, y, sizeMod, 'images/PNG/Retina/fishTile_079.png')
   

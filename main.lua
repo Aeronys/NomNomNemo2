@@ -20,10 +20,12 @@ function love.load()
     table.insert(chomps, sfx)
   end
   
+  pop = love.audio.newSource('audio/soundEffects/pufferPop.wav', 'static')
+  
   buttonClick = love.audio.newSource('audio/soundEffects/buttonClick.wav', 'static')
   buttonClick:setVolume(0.25)
   gulp = love.audio.newSource('audio/soundEffects/nemoGulp1.wav', 'static')
-  waves = love.audio.newSource('audio/soundEffects/waves.wav', 'stream')
+  waves = love.audio.newSource('audio/soundEffects/waves2.wav', 'stream')
   waves:setLooping(true)
   
   bgm = love.audio.newSource('audio/music/aquarium-fish-132518.mp3', 'stream')
@@ -287,8 +289,14 @@ function drawVictory()
 end
 
 function eatFish(player, fish, fishIndex)
-  local chomp = love.math.random(chompCount)
-  chomps[chomp]:play()
+  -- Pufferfish make a popping sound when eaten, all other fish use the default chomping sound
+  if fish.type == 'PufferFish' then
+    pop:play()
+  else
+    local chomp = love.math.random(chompCount)
+    chomps[chomp]:play()
+  end
+  
   player.eatCount = player.eatCount + 1
   table.remove(fishies, fishIndex)
   player:processXP(fish)
@@ -297,7 +305,6 @@ function eatFish(player, fish, fishIndex)
     player.eelEaten = true
     victory = true
   end
-  print(victory)
   
   -- Every time we eat a fish, we add two more in its place
   -- This keeps player from being able to focus too much on smaller fish

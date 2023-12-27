@@ -34,11 +34,13 @@ function StealthFish:draw()
   love.graphics.setColor(1, 1, 1, 1)
 end
 
+-- Stealth on when player doesn not have the Observant upgrade
 function StealthFish:stealthOn()
   stealthColors['neutral'] = {1, 1, 1, .1}
   stealthColors['retreat'] = {1, 1, 1, .05}
 end
 
+-- Stealth off after the player has acquired the Observant upgrade
 function StealthFish:stealthOff()
   stealthColors['neutral'] = {1, 1, 1, .5}
   stealthColors['retreat'] = {1, 1, 1, .3}

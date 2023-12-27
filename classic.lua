@@ -1,3 +1,4 @@
+-- Code taken from https://github.com/rxi/classic
 --
 -- classic
 --
