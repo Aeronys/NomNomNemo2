@@ -1,8 +1,9 @@
 # Nom Nom Nemo
+#### Video Demo: https://youtu.be/OmMcsdZHHxw
 
 ## Summary
 
-This is my submission for CS50x's final project. In week 0 of the class, I created a simple fish game in Scratch, in which you would swim around the screen trying to eat smaller fish and avoid being eaten by bigger fish. This was all contained to a small, static playing area. My aim with this project was to imagine how this initial game could be expanded on and put that into being. In this new version of Nom Nom Nemo, the play area is much bigger, and the game has become a side scroller as you explore the ocean.
+This is my submission for CS50X's final project. In week 0 of the class, I created a simple fish game in Scratch, in which you would swim around the screen trying to eat smaller fish and avoid being eaten by bigger fish. This was all contained to a small, static playing area. My aim with this project was to imagine how this initial game could be expanded on and put that into being. In this new version of Nom Nom Nemo, the play area is much bigger, and the game has become a side scroller as you explore the ocean.
 
 There are also multiple types of fish that exhibit different behaviours. A leveling system has also been added into the game, where instead of simply growing bigger with each fish the player eats, players now gain experience and level up at certain experience breakpoints. On level up, the player is presented with different upgrade options, allowing the player to choose how they would like to grow their fish's abilities.
 
@@ -36,7 +37,7 @@ The other feature of puffer fish that sets them apart from other fish in the gam
 
 For collision purposes puffer fish are considered to be only 95% of their actual size, to make things a little more forgiving with the player having to judge whether they are bigger or not. This was done in consideration of both the fact that they have a more unique shape than most fish in the game, making their size a little more difficult to judge, and the fact that they do not become alert when the player nears them, providing the warning that other fish provide to let the player know that they are a danger.
 
-**Big Fish** - These large, redc fish are the end game fish. They do not move very quickly or frequently when they are in their neutral state, but they have a very large detection range, and when they do detect the player they move very quickly. These fish are the greatest threat in the game, but also a great source of experience points.
+**Big Fish** - These large, red, fish are the end game fish. They do not move very quickly or frequently when they are in their neutral state, but they have a very large detection range, and when they do detect the player they move very quickly. These fish are the greatest threat in the game, but also a great source of experience points.
 
 **Eel** - The final fish of the game. These fish do not begin to spawn until the player reaches level 18. They are normally inedible to the player, but at level 20 the player is given an upgrade that enables them to eat eels. Eating an eel is the win condition for the player.
 
@@ -103,6 +104,10 @@ For example, initially the pause feature was very simple, and just put all gamep
 Some features didn't end up being implemented, but I'd like to consider adding them in later should I ever come back to working on this game. I had thought it would be interesting to make the "big fish" of the game behave uniquely by instead of having them hold still during their alert timer, they could instead slowly accelerate towards the player until reaching their max speed. Another feature I might like to add in the future is instead of having the "eel slurper" upgrade be something you attain by hitting level 20, it could be a pickup found at the very bottom of the ocean. I was considering this because I found that with the bottom of the ocean being so dangerous, I usually ended up beating the game without ever reaching the bottom. Adding this pickup requirement to be able to eat eels could make the game more interesting by forcing players to reach the bottom in order to be able to beat the game. There were many other small features that were not implemented due to time constraints, such as more advanced audio/volume controls, and a separate buttons class.
 
 Another challenge was deciding when it was appropriate to create a new class, and which classes to put which functions into. Some of these challenges have been previously mentioned, such as the decision to put the ResolveCollision function into main.lua, and the decision to not make a separate buttons class. I'm somewhat satisfied with the decisions I've made, but do feel some regret at the way I implemented resolveCollision, as I feel it would've been more appropriate to include it as part of the player class.
+
+As for technical challenges, one challenge faced was getting the fish hitboxes to feel right. Initially the player was eating/being eaten without touching enemy fish, due to the empty space in the image files. To overcome this I wrote the function getRealDimensions to go through images pixel by pixel and determine its real dimensions by disregarding any pixels with a value of (0, 0, 0, 0). This greatly improved the hitboxes and the feel of the game. The hitboxes are still not entirely accurate, as they're simply based on length and width, leaving some room for error if the corners touch, but I deemed them to be good enough for the purposes of this game.
+
+A related issue was deciding how fish size would be determined. I initially had the game determine this by which fish image had the greater pixel count, but I found that this sometimes returned results that were less than intuitive, and so I opted to instead simply determine size by multiplying length by width.
 
 ## Credits
 

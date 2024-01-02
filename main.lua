@@ -53,7 +53,7 @@ function love.load()
   
   -- Level dimensions
   playAreaWidth = 5500
-  playAreaHeight = 8000
+  playAreaHeight = 12000
   
   -- Get screen dimensions
   screenWidth = love.graphics.getWidth()
@@ -63,7 +63,7 @@ function love.load()
   mainScreen = Window(700, 500)
   mainButtonWidth = 128
   mainButtonHeight = 80
-  mainButtonYOffset = 360
+  mainButtonYOffset = 500
   mainButtonYPos = mainScreen.yPos + mainButtonYOffset
   
   mainButtonInfo = {
@@ -94,8 +94,7 @@ function love.load()
   
   -- Set default starting values for player and enemy fish
   playerStartSize = 1
-  startingFishAmount = 500
-  maxFishAmount = 10000
+  startingFishAmount = 350
   
   -- Does all the load actions that would need to be repeated upon the game reseting
   reset()
@@ -183,13 +182,20 @@ function addRandomFish()
   local fishType = fishTypesAllowed[love.math.random(#fishTypesAllowed)]
   local fishSize = 1 + love.math.random()
   local fishX = love.math.random(playAreaWidth)
-  local fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
+  local fishY
+  
+  -- With 'BigFish' we make a special effort to spawn the smaller ones higher up and the big ones lower down
+  if fishType == 'BigFish' then
+    fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound']) + (1000 * fishSize)
+  else
+    fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
+  end
   
   -- Makes sure that new fish aren't spawned too close to the player
   --local xdistance = math.min(player.x - fishX, fishX + playAreaWidth - player.x, playerX + playAreaWidth - fishX)
   
   while math.abs(player.x - fishX) <= fishTypes[fishType]['spawnBuffer'] and math.abs(player.y - fishY) <= fishTypes[fishType]['spawnBuffer'] do
-    fishY = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
+    fishX = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
   end
     
   -- We call different classes based on which fish we randomized
@@ -306,12 +312,8 @@ function eatFish(player, fish, fishIndex)
     victory = true
   end
   
-  -- Every time we eat a fish, we add two more in its place
-  -- This keeps player from being able to focus too much on smaller fish
-  -- We put a max amount just to make sure we don't completely break the game
-  if #fishies < maxFishAmount then
-    table.insert(fishies, addRandomFish())
-  end
+  --Replace the fish we've just eaten
+  table.insert(fishies, addRandomFish())
 end
   
 function eatPlayer()
@@ -338,16 +340,16 @@ function reset()
   -- We set here our boundaries for where each type of fish can be spawned
   -- Names need to match type of each fish class
   fishTypes = {
-    ['Fish'] = {['upperBound'] = 0, ['lowerBound'] = 2500, ['spawnBuffer'] = 100, ['edible'] = true},
-    ['StealthFish'] = {['upperBound'] = 1200, ['lowerBound'] = 4500, ['spawnBuffer'] = 300, ['edible'] = true},
-    ['GreenFish'] = {['upperBound'] = 3000, ['lowerBound'] = 6000, ['spawnBuffer'] = 500, ['edible'] = true},
-    ['BigFish'] = {['upperBound'] = 4500, ['lowerBound'] = 8000, ['spawnBuffer'] = 800, ['edible'] = true},
-    ['PufferFish'] = {['upperBound'] = 1500, ['lowerBound'] = 7000, ['spawnBuffer'] = 1000, ['edible'] = false},
+    ['Fish'] = {['upperBound'] = 0, ['lowerBound'] = 3000, ['spawnBuffer'] = 150, ['edible'] = true},
+    ['StealthFish'] = {['upperBound'] = 2000, ['lowerBound'] = 7000, ['spawnBuffer'] = 300, ['edible'] = true},
+    ['GreenFish'] = {['upperBound'] = 4500, ['lowerBound'] = 8000, ['spawnBuffer'] = 500, ['edible'] = true},
+    ['BigFish'] = {['upperBound'] = 6000, ['lowerBound'] = 10000, ['spawnBuffer'] = 800, ['edible'] = true},
+    ['PufferFish'] = {['upperBound'] = 3300, ['lowerBound'] = 11000, ['spawnBuffer'] = 1000, ['edible'] = false},
     ['Eel'] = {['upperBound'] = 0, ['lowerBound'] = playAreaHeight, ['spawnBuffer'] = 3000, ['edible'] = false}
     }
   
    -- Order of fish types matters, as that's what's used by our random function to determine which fish to spawn
-  fishTypesAllowed = {'Fish', 'StealthFish', 'GreenFish', 'BigFish', 'PufferFish'}
+  fishTypesAllowed = {'Fish', 'StealthFish', 'GreenFish', 'PufferFish'}
   
    -- Randomly pick seabed images to make up our seabed
   seaBed = randomizeSeaBed()
@@ -368,7 +370,11 @@ function reset()
     table.insert(fishies, addRandomFish())
   end
   
+  -- BigFish are now included in initial spawn
+  table.insert(fishTypesAllowed, 'BigFish')
+  
   -- Makes stealth fish difficult to see again
+  -- This is done to keep the bottom of the ocean from being too overrun with BigFish by the time you're a high enough level to get there
   StealthFish:stealthOn()
 end
 

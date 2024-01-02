@@ -74,14 +74,14 @@ function Fish:detectPlayer(player)
       end
       
       local distance = math.sqrt(self.xDistance ^ 2 + self.yDistance ^ 2)
-      if distance <= math.max(self.detectDistance - player.stealth, 30 * self.sizeModifier) then
+      if distance <= math.max(self.detectDistance - player.stealth, 100 * self.sizeModifier) then
         if player.realSize >= self.realSize then
           self.state = 'retreat'
         elseif player.realSize < self.realSize and self.state ~= 'alert' and self.state ~= 'attack' then
           self:setAlert()
         end
       -- If the player reaches a certain distance from the enemy fish, the enemy fish will stop chasing and go back to a neutral state
-      elseif distance >= math.max(self.escapeDistance - (player.stealth / 2), 100 * self.sizeModifier) then
+      elseif distance >= math.max(self.escapeDistance - (player.stealth / 2), 80 * self.sizeModifier) then
         self:setNeutral()
       end
     end
@@ -116,16 +116,16 @@ function Fish:animateFish(dt)
     self:moveFish(self:findXDirection(self.x, player.x), dt)
     
   -- If the fish is in an attack state, it will try to pursue the player
-  elseif self.state == 'attack' then
-    -- Distance needs to be more than 1 to keep fish from constantly spinning in place when it lines up with player
-    if self.xDistance > 0 then
+elseif self.state == 'attack' then
+    -- Only move when distance is greater than 1, to prevent the fish from constantly switching directions
+    if self:findXDistance(self.x, player.x) > 1 then
       self:moveFish(self:findXDirection(player.x, self.x), dt)
     end
     
     if player.y > self.y then
       self:moveFish('down', dt)
     -- Distance needs to be more than 1, to keep fish from constantly spinning in place when it lines up with player
-    elseif self.yDistance > 0 then
+    elseif self.yDistance > 1 then
       self:moveFish('up', dt)
     end
     
