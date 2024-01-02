@@ -192,8 +192,6 @@ function addRandomFish()
   end
   
   -- Makes sure that new fish aren't spawned too close to the player
-  --local xdistance = math.min(player.x - fishX, fishX + playAreaWidth - player.x, playerX + playAreaWidth - fishX)
-  
   while math.abs(player.x - fishX) <= fishTypes[fishType]['spawnBuffer'] and math.abs(player.y - fishY) <= fishTypes[fishType]['spawnBuffer'] do
     fishX = love.math.random(fishTypes[fishType]['upperBound'], fishTypes[fishType]['lowerBound'])
   end

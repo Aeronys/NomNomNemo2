@@ -125,7 +125,7 @@ elseif self.state == 'attack' then
     if player.y > self.y then
       self:moveFish('down', dt)
     -- Distance needs to be more than 1, to keep fish from constantly spinning in place when it lines up with player
-    elseif self.yDistance > 1 then
+    elseif self.yDistance > 0 then
       self:moveFish('up', dt)
     end
     
