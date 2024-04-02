@@ -414,6 +414,25 @@ function love.keyreleased(key)
     player.currentRotation = 0
   end
   
+  -- Cheat to grow player's fish
+  if key == 'g' and love.keyboard.isDown('lctrl') then
+    player.upgrades:grow(player)
+  end
+  
+   
+  -- Cheat to increase player's speed
+  if key == 's' and love.keyboard.isDown('lctrl') then
+    player.upgrades:speedUp(player)
+  end
+  
+  -- Cheat to instantly level up
+  if key == 'l' and love.keyboard.isDown('lctrl') then
+    if player.level < #player.levelUps then
+      player.xp = player.levelUps[player.level]
+      player:levelUp()
+    end
+  end
+  
   -- p will be our pause button
   -- Check if we're upgrading so player can't unpause during upgrade screen
   if (key == 'p' or key == 'space' or key == 'escape') and not (player.upgrades.upgrading or victory) then
