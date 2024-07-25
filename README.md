@@ -41,7 +41,7 @@ For collision purposes puffer fish are considered to be only 95% of their actual
 
 **Eel** - The final fish of the game. These fish do not begin to spawn until the player reaches level 18. They are normally inedible to the player, but at level 20 the player is given an upgrade that enables them to eat eels. Eating an eel is the win condition for the player.
 
-Throughout the game, eels will neither chase or retreat from the player, but their movement is randomized, and they move at incredibly fast speeds. Until getting the Eel Slurper upgrade, the player must be very wary wary around eels, not to accidentally get caught up in its path
+Throughout the game, eels will neither chase or retreat from the player, but their movement is randomized, and they move at incredibly fast speeds. Until getting the Eel Slurper upgrade, the player must be very wary around eels, not to accidentally get caught up in its path
 
 ## Types of upgrades
 
